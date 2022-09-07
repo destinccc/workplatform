@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UccUserApplicaitonMapper">
+    
+    <resultMap type="UccUserApplicaiton" id="UccUserApplicaitonResult">
+        <result property="userCode"    column="user_code"    />
+        <result property="applicationCode"    column="application_code"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectUccUserApplicaitonVo">
+        select user_code, application_code, create_time, create_by, update_time, update_by from ucc_user_applicaiton
+    </sql>
+
+    <select id="selectUccUserApplicaitonList" parameterType="UccUserApplicaiton" resultMap="UccUserApplicaitonResult">
+        <include refid="selectUccUserApplicaitonVo"/>
+        <where>  
+            <if test="userCode != null  and userCode != ''"> and user_code = #{userCode}</if>
+            <if test="applicationCode != null  and applicationCode != ''"> and application_code = #{applicationCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectUccUserApplicaitonByUserCode" parameterType="String" resultMap="UccUserApplicaitonResult">
+        <include refid="selectUccUserApplicaitonVo"/>
+        where user_code = #{userCode}
+    </select>
+        
+    <insert id="insertUccUserApplicaiton" parameterType="UccUserApplicaiton">
+        insert into ucc_user_applicaiton
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userCode != null">user_code,</if>
+            <if test="applicationCode != null">application_code,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userCode != null">#{userCode},</if>
+            <if test="applicationCode != null">#{applicationCode},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUccUserApplicaiton" parameterType="UccUserApplicaiton">
+        update ucc_user_applicaiton
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applicationCode != null">application_code = #{applicationCode},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where user_code = #{userCode}
+    </update>
+
+    <delete id="deleteUccUserApplicaitonByUserCode" parameterType="String">
+        delete from ucc_user_applicaiton where user_code = #{userCode}
+    </delete>
+
+    <delete id="deleteUccUserApplicaitonByUserCodes" parameterType="String">
+        delete from ucc_user_applicaiton where user_code in 
+        <foreach item="userCode" collection="array" open="(" separator="," close=")">
+            #{userCode}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucOrganInfoMapper">
+    
+    <resultMap type="UucOrganInfo" id="UucOrganInfoResult">
+        <result property="id"    column="id"    />
+        <result property="organCode"    column="organ_code"    />
+        <result property="organName"    column="organ_name"    />
+        <result property="shortName"    column="short_name"    />
+        <result property="organRegistration"    column="organ_registration"    />
+        <result property="taxIdentiNumber"    column="tax_identi_number"    />
+        <result property="corporate"    column="corporate"    />
+        <result property="contactTel"    column="contact_tel"    />
+        <result property="enterpriseNature"    column="enterprise_nature"    />
+        <result property="bankCode"    column="bank_code"    />
+        <result property="bankName"    column="bank_name"    />
+        <result property="bankAddr"    column="bank_addr"    />
+        <result property="email"    column="email"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectUucOrganInfoVo">
+        select id, organ_code, organ_name, short_name, organ_registration, tax_identi_number, corporate, contact_tel, enterprise_nature, bank_code, bank_name, bank_addr, email, status, create_by, create_time, update_by, update_time from uuc_organ_info
+    </sql>
+
+    <select id="selectUucOrganInfoList" parameterType="UucOrganInfo" resultMap="UucOrganInfoResult">
+        <include refid="selectUucOrganInfoVo"/>
+        <where>  
+            <if test="organCode != null  and organCode != ''"> and organ_code = #{organCode}</if>
+            <if test="organName != null  and organName != ''"> and organ_name like concat('%', #{organName}, '%')</if>
+            <if test="shortName != null  and shortName != ''"> and short_name like concat('%', #{shortName}, '%')</if>
+            <if test="organRegistration != null  and organRegistration != ''"> and organ_registration = #{organRegistration}</if>
+            <if test="taxIdentiNumber != null  and taxIdentiNumber != ''"> and tax_identi_number = #{taxIdentiNumber}</if>
+            <if test="corporate != null  and corporate != ''"> and corporate = #{corporate}</if>
+            <if test="contactTel != null  and contactTel != ''"> and contact_tel = #{contactTel}</if>
+            <if test="enterpriseNature != null  and enterpriseNature != ''"> and enterprise_nature = #{enterpriseNature}</if>
+            <if test="bankCode != null  and bankCode != ''"> and bank_code = #{bankCode}</if>
+            <if test="bankName != null  and bankName != ''"> and bank_name like concat('%', #{bankName}, '%')</if>
+            <if test="bankAddr != null  and bankAddr != ''"> and bank_addr = #{bankAddr}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectUucOrganInfoById" parameterType="Long" resultMap="UucOrganInfoResult">
+        <include refid="selectUucOrganInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertUucOrganInfo" parameterType="UucOrganInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into uuc_organ_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">id,</if>
+            <if test="organCode != null and organCode != ''">organ_code,</if>
+            <if test="organName != null and organName != ''">organ_name,</if>
+            <if test="shortName != null">short_name,</if>
+            <if test="organRegistration != null">organ_registration,</if>
+            <if test="taxIdentiNumber != null">tax_identi_number,</if>
+            <if test="corporate != null">corporate,</if>
+            <if test="contactTel != null">contact_tel,</if>
+            <if test="enterpriseNature != null">enterprise_nature,</if>
+            <if test="bankCode != null">bank_code,</if>
+            <if test="bankName != null">bank_name,</if>
+            <if test="bankAddr != null">bank_addr,</if>
+            <if test="email != null">email,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">#{id},</if>
+            <if test="organCode != null and organCode != ''">#{organCode},</if>
+            <if test="organName != null and organName != ''">#{organName},</if>
+            <if test="shortName != null">#{shortName},</if>
+            <if test="organRegistration != null">#{organRegistration},</if>
+            <if test="taxIdentiNumber != null">#{taxIdentiNumber},</if>
+            <if test="corporate != null">#{corporate},</if>
+            <if test="contactTel != null">#{contactTel},</if>
+            <if test="enterpriseNature != null">#{enterpriseNature},</if>
+            <if test="bankCode != null">#{bankCode},</if>
+            <if test="bankName != null">#{bankName},</if>
+            <if test="bankAddr != null">#{bankAddr},</if>
+            <if test="email != null">#{email},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucOrganInfo" parameterType="UucOrganInfo">
+        update uuc_organ_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="organCode != null and organCode != ''">organ_code = #{organCode},</if>
+            <if test="organName != null and organName != ''">organ_name = #{organName},</if>
+            <if test="shortName != null">short_name = #{shortName},</if>
+            <if test="organRegistration != null">organ_registration = #{organRegistration},</if>
+            <if test="taxIdentiNumber != null">tax_identi_number = #{taxIdentiNumber},</if>
+            <if test="corporate != null">corporate = #{corporate},</if>
+            <if test="contactTel != null">contact_tel = #{contactTel},</if>
+            <if test="enterpriseNature != null">enterprise_nature = #{enterpriseNature},</if>
+            <if test="bankCode != null">bank_code = #{bankCode},</if>
+            <if test="bankName != null">bank_name = #{bankName},</if>
+            <if test="bankAddr != null">bank_addr = #{bankAddr},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucOrganInfoById" parameterType="Long">
+        delete from uuc_organ_info where id = #{id}
+    </delete>
+
+    <delete id="deleteUucOrganInfoByIds" parameterType="String">
+        delete from uuc_organ_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

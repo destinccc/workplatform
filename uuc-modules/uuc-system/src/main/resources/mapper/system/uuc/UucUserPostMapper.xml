@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucUserPostMapper">
+    
+    <resultMap type="UucUserPost" id="UucUserPostResult">
+        <result property="id"    column="id"    />
+        <result property="userCode"    column="user_code"    />
+        <result property="postCode"    column="post_code"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectUucUserPostVo">
+        select id, user_code, post_code, create_time, create_by, update_time, update_by from uuc_user_post
+    </sql>
+
+    <select id="selectUucUserPostList" parameterType="UucUserPost" resultMap="UucUserPostResult">
+        <include refid="selectUucUserPostVo"/>
+        <where>  
+            <if test="userCode != null  and userCode != ''"> and user_code = #{userCode}</if>
+            <if test="postCode != null  and postCode != ''"> and post_code = #{postCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectUucUserPostById" parameterType="Long" resultMap="UucUserPostResult">
+        <include refid="selectUucUserPostVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertUucUserPost" parameterType="UucUserPost" useGeneratedKeys="true" keyProperty="id">
+        insert into uuc_user_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userCode != null and userCode != ''">user_code,</if>
+            <if test="postCode != null and postCode != ''">post_code,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userCode != null and userCode != ''">#{userCode},</if>
+            <if test="postCode != null and postCode != ''">#{postCode},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucUserPost" parameterType="UucUserPost">
+        update uuc_user_post
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userCode != null and userCode != ''">user_code = #{userCode},</if>
+            <if test="postCode != null and postCode != ''">post_code = #{postCode},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucUserPostById" parameterType="Long">
+        delete from uuc_user_post where id = #{id}
+    </delete>
+
+    <delete id="deleteUucUserPostByIds" parameterType="String">
+        delete from uuc_user_post where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

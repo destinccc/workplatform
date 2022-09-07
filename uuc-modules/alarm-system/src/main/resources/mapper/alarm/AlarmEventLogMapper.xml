@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.alarm.mapper.AlarmEventLogMapper">
+
+    <resultMap type="com.uuc.alarm.domain.AlarmEventLog" id="AlarmEventLogResult">
+        <result property="id" column="id"/>
+        <result property="eventId" column="event_id"/>
+        <result property="status" column="status"/>
+        <result property="logTime" column="log_time"/>
+        <result property="value" column="value"/>
+        <result property="notifyWay" column="notify_way"/>
+        <result property="content" column="content"/>
+        <result property="created" column="created"/>
+        <result property="updated" column="updated"/>
+    </resultMap>
+    <resultMap type="com.uuc.alarm.domain.po.AlarmEventLogListPo" id="AlarmEventLogListPo">
+        <result property="id" column="id"/>
+        <result property="eventId" column="event_id"/>
+        <result property="status" column="status"/>
+        <result property="logTime" column="log_time"/>
+        <result property="value" column="value"/>
+        <result property="notifyWay" column="notify_way"/>
+        <result property="content" column="content"/>
+    </resultMap>
+
+    <sql id="selectAlarmEventLogVo">
+        select id,
+               event_id,
+               `status`,
+               log_time,
+               `value`,
+               notify_way,
+               content,
+               created,
+               updated
+        from alarm_event_log
+    </sql>
+
+    <select id="selectAlarmEventLogList" parameterType="com.uuc.alarm.domain.dto.AlarmEventLogListDto"
+            resultMap="AlarmEventLogListPo">
+        select id,
+        event_id,
+        `status`,
+        log_time,
+        `value`,
+        notify_way,
+        content
+        from alarm_event_log
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="eventId != null ">and event_id = #{eventId}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="startTime != null">and log_time >= FROM_UNIXTIME(round(#{startTime}/1000))</if>
+            <if test="endTime!=null ">and log_time &lt;= FROM_UNIXTIME(round(#{endTime}/1000))</if>
+            <if test="value != null  and value != ''">and value = #{value}</if>
+            <if test="notifyWay != null  and notifyWay != ''">and notify_way = #{notifyWay}</if>
+        </where>
+        order by log_time desc
+    </select>
+
+    <select id="selectAlarmEventLogById" parameterType="Long" resultMap="AlarmEventLogResult">
+        <include refid="selectAlarmEventLogVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAlarmEventLog" parameterType="com.uuc.alarm.domain.AlarmEventLog" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into alarm_event_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventId != null">event_id,</if>
+            <if test="status != null">status,</if>
+            <if test="logTime != null">log_time,</if>
+            <if test="value != null and value != ''">value,</if>
+            <if test="notifyWay != null">notify_way,</if>
+            <if test="content != null">content,</if>
+            <if test="created != null">created,</if>
+            <if test="updated != null">updated,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eventId != null">#{eventId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="logTime != null">#{logTime},</if>
+            <if test="value != null and value != ''">#{value},</if>
+            <if test="notifyWay != null">#{notifyWay},</if>
+            <if test="content != null">#{content},</if>
+            <if test="created != null">#{created},</if>
+            <if test="updated != null">#{updated},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAlarmEventLog" parameterType="com.uuc.alarm.domain.AlarmEventLog">
+        update alarm_event_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventId != null">event_id = #{eventId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="logTime != null">log_time = #{logTime},</if>
+            <if test="value != null and value != ''">value = #{value},</if>
+            <if test="notifyWay != null">notify_way = #{notifyWay},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="created != null">created = #{created},</if>
+            <if test="updated != null">updated = #{updated},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAlarmEventLogById" parameterType="Long">
+        delete
+        from alarm_event_log
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteAlarmEventLogByIds" parameterType="String">
+        delete from alarm_event_log where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertAlarmEventLog" parameterType="com.uuc.alarm.domain.dto.AlarmEventLogBatchInsertDto">
+        insert into alarm_event_log(event_id, `status`, log_time, `value`, notify_way, content, created, updated)
+        values
+        <foreach item="eventId" collection="ids" separator=",">
+            (#{eventId}, #{status}, #{logTime}, #{value}, #{notifyWay}, #{content}, #{created}, #{updated})
+        </foreach>
+    </insert>
+</mapper>

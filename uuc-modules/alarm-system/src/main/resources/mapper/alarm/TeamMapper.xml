@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.alarm.mapper.TeamMapper">
+
+    <resultMap type="com.uuc.alarm.domain.Team" id="TeamResult">
+        <result property="id" column="id"/>
+        <result property="ident" column="ident"/>
+        <result property="name" column="name"/>
+        <result property="note" column="note"/>
+        <result property="mgmt" column="mgmt"/>
+        <result property="creator" column="creator"/>
+        <result property="lastUpdated" column="last_updated"/>
+        <result property="createdTime" column="created_time"/>
+    </resultMap>
+
+    <sql id="selectTeamVo">
+        select id,
+               ident,
+               name,
+               note,
+               mgmt,
+               creator,
+               last_updated,
+               created_time
+        from team
+    </sql>
+
+    <select id="selectTeamList" parameterType="com.uuc.alarm.domain.Team" resultMap="TeamResult">
+        <include refid="selectTeamVo"/>
+        <where>
+            <if test="ident != null  and ident != ''">and ident = #{ident}</if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="note != null  and note != ''">and note = #{note}</if>
+            <if test="mgmt != null ">and mgmt = #{mgmt}</if>
+            <if test="creator != null ">and creator = #{creator}</if>
+            <if test="lastUpdated != null ">and last_updated = #{lastUpdated}</if>
+            <if test="createdTime != null ">and created_time = #{createdTime}</if>
+        </where>
+    </select>
+
+    <select id="selectTeamById" parameterType="Integer" resultMap="TeamResult">
+        <include refid="selectTeamVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTeam" parameterType="com.uuc.alarm.domain.Team" useGeneratedKeys="true" keyProperty="id">
+        insert into team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ident != null">ident,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="note != null and note != ''">note,</if>
+            <if test="mgmt != null">mgmt,</if>
+            <if test="creator != null">creator,</if>
+            <if test="lastUpdated != null">last_updated,</if>
+            <if test="createdTime != null">created_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ident != null">#{ident},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="note != null and note != ''">#{note},</if>
+            <if test="mgmt != null">#{mgmt},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="lastUpdated != null">#{lastUpdated},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTeam" parameterType="com.uuc.alarm.domain.Team">
+        update team
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ident != null">ident = #{ident},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="note != null and note != ''">note = #{note},</if>
+            <if test="mgmt != null">mgmt = #{mgmt},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="lastUpdated != null">last_updated = #{lastUpdated},</if>
+            <if test="createdTime != null">created_time = #{createdTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeamById" parameterType="Integer">
+        delete
+        from team
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteTeamByIds" parameterType="String">
+        delete from team where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectTeamNameByIds" parameterType="java.util.Set" resultType="java.util.Map">
+        select id, name from team
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectTeamNameListByIds" resultType="java.lang.String">
+        select name from team
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

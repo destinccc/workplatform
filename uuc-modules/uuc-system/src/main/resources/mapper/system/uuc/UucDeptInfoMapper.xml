@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucDeptInfoMapper">
+
+    <resultMap type="com.uuc.system.api.model.UucDeptInfo" id="UucDeptInfoResult">
+        <result property="id"    column="id"    />
+<!--        <result property="organFlag"    column="organ_flag"    />-->
+<!--        <result property="organCode"    column="organ_code"    />-->
+        <result property="deptCode"    column="dept_code"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="parentCode"    column="parent_code"    />
+        <result property="level"    column="level"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="leaderUserCode"    column="leader_user_code"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="dingDeptId"    column="ding_dept_id"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectUucDeptInfoVo">
+        select
+            d.id,
+<!--            organ_flag, organ_code, -->
+            d.dept_code, d.dept_name, d.parent_code, d.level, d.ancestors, d.order_num, d.leader_user_code,
+            d.phone, d.email, d.status, d.create_by, d.create_time, d.update_by, d.update_time, d.ding_dept_id,
+            d.dept_type as deptType, d.address, u.user_name as leaderName, d.remark
+        from uuc_dept_info d
+        left join uuc_user_info u on d.leader_user_code = u.id
+    </sql>
+
+    <select id="selectUucDeptInfoList" parameterType="UucDeptInfo" resultMap="UucDeptInfoResult">
+        <include refid="selectUucDeptInfoVo"/>
+        <where>
+<!--            <if test="organFlag != null  and organFlag != ''"> and organ_flag = #{organFlag}</if>-->
+<!--            <if test="organCode != null  and organCode != ''"> and organ_code = #{organCode}</if>-->
+            <if test="deptCode != null  and deptCode != ''"> and d.dept_code = #{deptCode}</if>
+            <if test="deptName != null  and deptName != ''"> and d.dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="parentCode != null  and parentCode != ''"> and d.parent_code = #{parentCode}</if>
+            <if test="level != null "> and d.level = #{level}</if>
+            <if test="ancestors != null  and ancestors != ''"> and d.ancestors = #{ancestors}</if>
+            <if test="orderNum != null "> and d.order_num = #{orderNum}</if>
+            <if test="leaderUserCode != null  and leaderUserCode != ''"> and d.leader_user_code = #{leaderUserCode}</if>
+            <if test="phone != null  and phone != ''"> and d.phone = #{phone}</if>
+            <if test="email != null  and email != ''"> and d.email = #{email}</if>
+            <if test="status != null  and status != ''"> and d.status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectUucDeptInfoById" parameterType="Long" resultMap="UucDeptInfoResult">
+        <include refid="selectUucDeptInfoVo"/>
+        where d.id = #{id}
+    </select>
+
+    <insert id="insertUucDeptInfo" parameterType="UucDeptInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into uuc_dept_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">id,</if>
+<!--            <if test="organFlag != null and organFlag != ''">organ_flag,</if>-->
+<!--            <if test="organCode != null">organ_code,</if>-->
+            <if test="deptCode != null and deptCode != ''">dept_code,</if>
+            <if test="deptName != null and deptName != ''">dept_name,</if>
+            <if test="parentCode != null">parent_code,</if>
+            <if test="level != null">level,</if>
+            <if test="ancestors != null and ancestors != ''">ancestors,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="leaderUserCode != null">leader_user_code,</if>
+            <if test="phone != null">phone,</if>
+            <if test="email != null">email,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="dingDeptId != null">ding_dept_id,</if>
+            <if test="deptType != null">dept_type,</if>
+            <if test="address != null">address,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">#{id},</if>
+<!--            <if test="organFlag != null and organFlag != ''">#{organFlag},</if>-->
+<!--            <if test="organCode != null">#{organCode},</if>-->
+            <if test="deptCode != null and deptCode != ''">#{deptCode},</if>
+            <if test="deptName != null and deptName != ''">#{deptName},</if>
+            <if test="parentCode != null">#{parentCode},</if>
+            <if test="level != null">#{level},</if>
+            <if test="ancestors != null and ancestors != ''">#{ancestors},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="leaderUserCode != null">#{leaderUserCode},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="email != null">#{email},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="dingDeptId != null">#{dingDeptId},</if>
+            <if test="deptType != null">#{deptType},</if>
+            <if test="address != null">#{address},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucDeptInfo" parameterType="UucDeptInfo">
+        update uuc_dept_info
+        <trim prefix="SET" suffixOverrides=",">
+<!--            <if test="organFlag != null and organFlag != ''">organ_flag = #{organFlag},</if>-->
+<!--            <if test="organCode != null">organ_code = #{organCode},</if>-->
+            <if test="deptCode != null and deptCode != ''">dept_code = #{deptCode},</if>
+            <if test="deptName != null and deptName != ''">dept_name = #{deptName},</if>
+            <if test="parentCode != null">parent_code = #{parentCode},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="leaderUserCode != null">leader_user_code = #{leaderUserCode},</if>
+             phone = #{phone},
+            <if test="email != null">email = #{email},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="dingDeptId != null">ding_dept_id = #{dingDeptId},</if>
+            <if test="deptType != null">dept_type = #{deptType},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucDeptInfoById" parameterType="Long">
+        delete from uuc_dept_info where id = #{id}
+    </delete>
+
+<!--    <delete id="deleteUucDeptInfoByIds" parameterType="String">-->
+<!--        delete from uuc_dept_info where id in-->
+<!--        <foreach item="id" collection="array" open="(" separator="," close=")">-->
+<!--            #{id}-->
+<!--        </foreach>-->
+<!--    </delete>-->
+
+    <select id="selectByDingtalkId" resultMap="UucDeptInfoResult">
+        <include refid="selectUucDeptInfoVo"/> where d.ding_dept_id = #{deptId} limit 1
+    </select>
+
+    <select id="selectDingDept" resultType="java.lang.String">
+        SELECT DISTINCT
+                ding_dept_id
+        FROM
+                uuc_dept_info
+        WHERE
+                ding_dept_id IS NOT NULL
+    </select>
+
+    <select id="selectDeptByDeptType" resultType="java.lang.String">
+        SELECT DISTINCT
+            ding_dept_id
+        FROM
+            uuc_dept_info
+        WHERE
+            ding_dept_id IS NOT NULL
+        And dept_type = #{deptType}
+    </select>
+
+    <delete id="deleteDingDepts">
+        delete from uuc_dept_info where ding_dept_id in
+        <foreach item="deptId" collection="list" open="(" separator="," close=")">
+            #{deptId}
+        </foreach>
+    </delete>
+
+    <select id="selectByDeptCode" resultMap="UucDeptInfoResult">
+        select * from uuc_dept_info where id =#{deptCode} limit 1
+    </select>
+
+    <select id="selectAllDepts" resultMap="UucDeptInfoResult">
+        select * from uuc_dept_info
+    </select>
+
+    <select id="cmdbDeptList" resultType="com.uuc.system.api.uuc.dto.CmdbDeptDto">
+        SELECT
+                id AS deptCode,
+                dept_name AS deptName,
+                parent_code AS parentCode,
+                ancestors
+        FROM
+                uuc_dept_info
+    </select>
+</mapper>

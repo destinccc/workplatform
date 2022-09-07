@@ -1,0 +1,32 @@
+# Spring
+spring:
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: ${NACOS_ADDR:10.229.1.142:8848}
+        username: ${NACOS_USERNAME}
+        password: ${NACOS_PASSWORD}
+        namespace: ${NACOS_NAMESPACE:uuc}
+      config:
+        # 配置中心地址
+        server-addr: ${NACOS_ADDR:10.229.1.142:8848}
+        # 配置文件格式
+        file-extension: yml
+        # 命名空间
+        username: ${NACOS_USERNAME}
+        password: ${NACOS_PASSWORD}
+        namespace: ${NACOS_NAMESPACE:uuc}
+        # 配置组
+        group: UNIFIED_MANAGEMENT
+        # 共享配置
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+        # 扩展配置
+        extension-configs[0]:
+          dataId: ${spring.application.name}-dev.${spring.cloud.nacos.config.file-extension}
+          #          group: UNIFIED_MANAGEMENT
+          refresh: true
+        extension-configs[1]:
+          dataId: usercenter-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          refresh: true

@@ -1,0 +1,9 @@
+# Tomcat
+server:
+  port: 9515
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: alarm-system

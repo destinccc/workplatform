@@ -1,0 +1,12 @@
+# Tomcat
+server:
+  port: 9515
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: alarm-system
+  profiles:
+    # 环境配置
+    active: @profiles.active@

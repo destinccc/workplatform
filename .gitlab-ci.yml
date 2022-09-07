@@ -1,0 +1,194 @@
+# This file is a template, and might need editing before it works on your project.
+# see https://docs.gitlab.com/ee/ci/yaml/README.html for all available options
+image: harbor.galaxyclouds.com/gitlab/docker:latest
+
+stages:
+  - build
+  - build-images
+  - deploy
+  - cleanup
+
+variables:
+  TAG: '$CI_COMMIT_TAG'
+  REGISTRY: '$CI_HARBOR_REGISTRY'
+  CQ_REGISTRY: '$CQ_DOCKER_REGISTRY'
+
+build:
+  image: $REGISTRY/gitlab/maven:3.3.9-jdk-8
+  stage: build
+  script:
+    - echo "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd\">
+      <servers>
+      <server>
+      <id>siteServer</id>
+      <privateKey>/path/to/private/key</privateKey>
+      <passphrase>optional; leave empty if not used.</passphrase>
+      </server>
+      <server>
+      <id>releases</id>
+      <username>admin</username>
+      <password>admin123</password>
+      </server>
+      <server>
+      <id>snapshots</id>
+      <username>admin</username>
+      <password>admin123</password>
+      </server>
+      </servers>
+
+      <mirrors>
+      <mirror>
+      <id>alimaven</id>
+      <name>aliyun maven</name>
+      <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+      <mirrorOf>central</mirrorOf>
+      </mirror>
+      <mirror>
+      <id>uk</id>
+      <mirrorOf>central</mirrorOf>
+      <name>Human Readable Name for this Mirror.</name>
+      <url>http://uk.maven.org/maven2/</url>
+      </mirror>
+      <mirror>
+      <id>CN</id>
+      <name>OSChina Central</name>
+      <url>http://maven.oschina.net/content/groups/public/</url>
+      <mirrorOf>central</mirrorOf>
+      </mirror>
+      <mirror>
+      <id>nexus</id>
+      <name>internal nexus repository</name>
+      <url>http://repo.maven.apache.org/maven2</url>
+      <mirrorOf>central</mirrorOf>
+      </mirror>
+      <mirror>
+      <id>mirrorId</id>
+      <mirrorOf>central</mirrorOf>
+      <name>Human Readable Name </name>
+      <url>http://repo1.maven.org/maven2/</url>
+      </mirror>
+      <mirror>
+      <id>alimaven</id>
+      <name>aliyun maven</name>
+      <url>http://central.maven.org/maven2</url>
+      <mirrorOf>central</mirrorOf>
+      </mirror>
+      <mirror>
+      <id>junit</id>
+      <name>junit Address/</name>
+      <url>http://jcenter.bintray.com/</url>
+      <mirrorOf>central</mirrorOf>
+      </mirror>
+      </mirrors>
+      </settings>" > settings.xml
+    - mvn install --settings=settings.xml -DskipTests
+    - mvn clean package --settings=settings.xml --quiet
+  artifacts:
+    paths:
+      - uuc-auth/target/uuc-auth.jar
+      - uuc-gateway/target/uuc-gateway.jar
+      - uuc-modules/uuc-config/target/uuc-config.jar
+      - uuc-modules/uuc-es/target/uuc-modules-es.jar
+      - uuc-modules/uuc-file/target/uuc-modules-file.jar
+      - uuc-modules/uuc-system/target/uuc-modules-system.jar
+      - uuc-modules/uuc-job/target/uuc-modules-job.jar
+      - uuc-modules/uuc-xxljob/target/uuc-modules-xxljob.jar
+  only:
+    - tags
+
+docker-package:
+  stage: build-images
+  script:
+    - docker login -u "${CI_HARBOR_USER}" -p "${CI_HARBOR_PWD}" "${CI_HARBOR_PATH}"
+    # ruoyi-auth
+    - mkdir  -p docker/uuc/auth/jar/
+    - cp uuc-auth/target/uuc-auth.jar  docker/uuc/auth/jar/
+    - docker build -t $REGISTRY/uuc/uuc-auth:$TAG docker/uuc/auth
+    - docker push $REGISTRY/uuc/uuc-auth:$TAG
+    # ruoyi-gateway
+    - mkdir  -p docker/uuc/gateway/jar/
+    - cp uuc-gateway/target/uuc-gateway.jar docker/uuc/gateway/jar/
+    - docker build -t $REGISTRY/uuc/uuc-gateway:$TAG docker/uuc/gateway
+    - docker push $REGISTRY/uuc/uuc-gateway:$TAG
+    # ruoyi-system
+    - mkdir  -p docker/uuc/modules/system/jar/
+    - cp uuc-modules/uuc-system/target/uuc-modules-system.jar docker/uuc/modules/system/jar/
+    - docker build -t $REGISTRY/uuc/uuc-system:$TAG docker/uuc/modules/system
+    - docker push $REGISTRY/uuc/uuc-system:$TAG
+    # ruoyi-xxljob
+    - mkdir  -p docker/uuc/modules/xxljob/jar/
+    - cp uuc-modules/uuc-xxljob/target/uuc-modules-xxljob.jar docker/uuc/modules/xxljob/jar/
+    - docker build -t $REGISTRY/uuc/uuc-xxljob:$TAG docker/uuc/modules/xxljob
+    - docker push $REGISTRY/uuc/uuc-xxljob:$TAG
+  only:
+    - tags
+
+## 推送到重庆
+docker-package-cq:
+  stage: build-images
+  script:
+    - docker login -u "${CQ_DOCKER_USER}" -p "${CQ_DOCKER_PWD}" "${CQ_DOCKER_PATH}"
+    # ruoyi-auth
+    - mkdir  -p docker/uuc/auth/jar/
+    - cp uuc-auth/target/uuc-auth.jar  docker/uuc/auth/jar/
+    - docker build -t $CQ_REGISTRY/dockerforkevin/uuc-auth:$TAG docker/uuc/auth
+    - docker push $CQ_REGISTRY/dockerforkevin/uuc-auth:$TAG
+    # ruoyi-gateway
+    - mkdir  -p docker/uuc/gateway/jar/
+    - cp uuc-gateway/target/uuc-gateway.jar docker/uuc/gateway/jar/
+    - docker build -t $CQ_REGISTRY/dockerforkevin/uuc-gateway:$TAG docker/uuc/gateway
+    - docker push $CQ_REGISTRY/dockerforkevin/uuc-gateway:$TAG
+    # ruoyi-system
+    - mkdir  -p docker/uuc/modules/system/jar/
+    - cp uuc-modules/uuc-system/target/uuc-modules-system.jar docker/uuc/modules/system/jar/
+    - docker build -t $CQ_REGISTRY/dockerforkevin/uuc-system:$TAG docker/uuc/modules/system
+    - docker push $CQ_REGISTRY/dockerforkevin/uuc-system:$TAG
+    # ruoyi-xxljob
+    - mkdir  -p docker/uuc/modules/xxljob/jar/
+    - cp uuc-modules/uuc-xxljob/target/uuc-modules-xxljob.jar docker/uuc/modules/xxljob/jar/
+    - docker build -t $CQ_REGISTRY/dockerforkevin/uuc-xxljob:$TAG docker/uuc/modules/xxljob
+    - docker push $CQ_REGISTRY/dockerforkevin/uuc-xxljob:$TAG
+  only:
+    - tags
+
+helm-deploy:
+  image:
+    name: $REGISTRY/gitlab/helm:latest
+    entrypoint: [""]
+  stage: deploy
+  script:
+    - mkdir $HOME/.kube && cat $KUBE_CONFIG > $HOME/.kube/config
+    - helm upgrade -i --namespace uuc --kubeconfig $HOME/.kube/config --set image.repository=$REGISTRY/uuc/uuc-auth,image.tag=$TAG,containerPort=8200,service.port=8200 uuc-auth  ./charts
+    - helm upgrade -i --namespace uuc --kubeconfig $HOME/.kube/config --set image.repository=$REGISTRY/uuc/uuc-gateway,image.tag=$TAG,containerPort=8080,service.port=8080 uuc-gateway  ./charts
+    - helm upgrade -i --namespace uuc --kubeconfig $HOME/.kube/config --set image.repository=$REGISTRY/uuc/uuc-system,image.tag=$TAG,containerPort=9201,service.port=9201 uuc-system  ./charts
+    - helm upgrade -i --namespace uuc --kubeconfig $HOME/.kube/config --set image.repository=$REGISTRY/uuc/uuc-xxljob,image.tag=$TAG,containerPort=9511,service.port=9511 uuc-xxljob  ./charts
+
+  only:
+    - tags
+
+kubectl-deploy:
+  image: $REGISTRY/gitlab/kubectl:latest
+  stage: deploy
+  script:
+    - mkdir $HOME/.kube && cat $KUBE_CONFIG > $HOME/.kube/config
+  only:
+    - tags
+
+cleanup-job:
+  stage: cleanup
+  script:
+    # 删除本地镜像
+    - docker rmi $REGISTRY/uuc/uuc-auth:$TAG
+    - docker rmi $REGISTRY/uuc/uuc-gateway:$TAG
+    - docker rmi $REGISTRY/uuc/uuc-system:$TAG
+    - docker rmi $REGISTRY/uuc/uuc-xxljob:$TAG
+    - docker rmi $CQ_REGISTRY/dockerforkevin/uuc-auth:$TAG
+    - docker rmi $CQ_REGISTRY/dockerforkevin/uuc-gateway:$TAG
+    - docker rmi $CQ_REGISTRY/dockerforkevin/uuc-system:$TAG
+    - docker rmi $CQ_REGISTRY/dockerforkevin/uuc-xxljob:$TAG
+    # 删除临时镜像
+
+  when: always
+  only:
+    - tags
+  allow_failure: true

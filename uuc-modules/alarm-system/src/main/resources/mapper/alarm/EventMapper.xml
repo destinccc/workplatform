@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.alarm.mapper.EventMapper">
+
+    <resultMap type="com.uuc.alarm.domain.Event" id="EventResult">
+        <result property="id" column="id"/>
+        <result property="sid" column="sid"/>
+        <result property="sname" column="sname"/>
+        <result property="nodePath" column="node_path"/>
+        <result property="nid" column="nid"/>
+        <result property="endpoint" column="endpoint"/>
+        <result property="endpointAlias" column="endpoint_alias"/>
+        <result property="curNodePath" column="cur_node_path"/>
+        <result property="curNid" column="cur_nid"/>
+        <result property="priority" column="priority"/>
+        <result property="eventType" column="event_type"/>
+        <result property="category" column="category"/>
+        <result property="status" column="status"/>
+        <result property="detail" column="detail"/>
+        <result property="hashid" column="hashid"/>
+        <result property="etime" column="etime"/>
+        <result property="value" column="value"/>
+        <result property="users" column="users"/>
+        <result property="groups" column="groups"/>
+        <result property="runbook" column="runbook"/>
+        <result property="info" column="info"/>
+        <result property="summary" column="summary"/>
+        <result property="needUpgrade" column="need_upgrade"/>
+        <result property="alertUpgrade" column="alert_upgrade"/>
+        <result property="created" column="created"/>
+        <result property="notifySender" column="notify_sender"/>
+        <result property="closeTime" column="close_time"/>
+        <result property="closer" column="closer"/>
+        <result property="hostId" column="host_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="alertTimes" column="alert_times"/>
+        <result property="hostIdent" column="host_ident"/>
+        <result property="hostName" column="host_name"/>
+        <result property="strategy" column="strategy"/>
+        <result property="notifyTimes" column="notify_times"/>
+        <result property="notifyTime" column="notify_time"/>
+    </resultMap>
+    <resultMap type="com.uuc.alarm.domain.po.EventListPo" id="EventListPo">
+        <result property="id" column="id"/>
+        <result property="resourceId" column="host_id"/>
+        <result property="resourceName" column="host_name"/>
+        <result property="priority" column="priority"/>
+        <result property="strategyId" column="sid"/>
+        <result property="strategy" column="strategy"/>
+        <result property="summary" column="summary"/>
+        <result property="alarmTimes" column="alert_times"/>
+        <result property="eventType" column="event_type"/>
+        <result property="notifyStatus" column="status"/>
+        <result property="notifyGroup" column="groups"/>
+        <result property="etime" column="etime"/>
+        <result property="endpoint" column="endpoint"/>
+        <result property="notifyTime" column="notify_time"/>
+        <result property="notifyUser" column="users"/>
+        <result property="closeTime" column="close_time"/>
+        <result property="closer" column="closer"/>
+    </resultMap>
+    <resultMap type="com.uuc.alarm.domain.po.GroupPo" id="GroupPo">
+        <result property="resourceId" column="host_id"/>
+        <result property="value" column="priority"/>
+        <result property="count" column="count"/>
+    </resultMap>
+    <resultMap type="com.uuc.alarm.domain.po.EventInfoPo" id="EventInfoPo">
+        <result property="id" column="id"/>
+        <result property="strategy" column="strategy"/>
+        <result property="priority" column="priority"/>
+        <result property="notifyStatus" column="status"/>
+        <result property="users" column="users"/>
+        <result property="groups" column="groups"/>
+        <result property="eventType" column="event_type"/>
+        <result property="created" column="created"/>
+        <result property="summary" column="summary"/>
+        <result property="sid" column="sid"/>
+        <result property="straGroupId" column="stra_group_id"/>
+        <result property="closeTime" column="close_time"/>
+        <result property="closer" column="closer"/>
+        <result property="value" column="value"/>
+    </resultMap>
+    <sql id="selectEventVo">
+        select id,
+               sid,
+               sname,
+               node_path,
+               nid,
+               endpoint,
+               endpoint_alias,
+               cur_node_path,
+               cur_nid,
+               priority,
+               event_type,
+               category,
+               `status`,
+               detail,
+               hashid,
+               etime,
+               `value`,
+               users,
+               `groups`,
+               runbook,
+               info,
+               summary,
+               need_upgrade,
+               alert_upgrade,
+               created,
+               notify_sender,
+               close_time,
+               closer,
+               host_id,
+               update_time,
+               alert_times,
+               host_ident,
+               host_name,
+               strategy,
+               notify_times,
+               notify_time
+        from event
+    </sql>
+    <select id="selectEventList" parameterType="com.uuc.alarm.domain.dto.EventListDto" resultMap="EventListPo">
+        select id, host_id, host_name, priority, sid, strategy, info, summary, alert_times, event_type, `status`,
+        `groups`, etime, endpoint, notify_time, users, close_time, closer
+        from event
+        <where>
+            <if test="sid != null ">and sid = #{sid}</if>
+            <if test="sname != null  and sname != ''">and sname like concat('%', #{sname}, '%')</if>
+            <if test="nodePath != null  and nodePath != ''">and node_path = #{nodePath}</if>
+            <if test="nid != null ">and nid = #{nid}</if>
+            <if test="endpoint != null  and endpoint != ''">and endpoint = #{endpoint}</if>
+            <if test="endpointAlias != null  and endpointAlias != ''">and endpoint_alias = #{endpointAlias}</if>
+            <if test="curNodePath != null  and curNodePath != ''">and cur_node_path = #{curNodePath}</if>
+            <if test="curNid != null  and curNid != ''">and cur_nid = #{curNid}</if>
+            <if test="priority != null ">and priority = #{priority}</if>
+            <if test="eventType != null  and eventType != ''">and event_type = #{eventType}</if>
+            <if test="category != null ">and category = #{category}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="detail != null  and detail != ''">and detail = #{detail}</if>
+            <if test="hashid != null  and hashid != ''">and hashid = #{hashid}</if>
+            <if test="etime != null ">and etime = #{etime}</if>
+            <if test="value != null  and value != ''">and value = #{value}</if>
+            <if test="users != null  and users != ''">and users = #{users}</if>
+            <if test="groups != null  and groups != ''">and groups = #{groups}</if>
+            <if test="runbook != null  and runbook != ''">and runbook = #{runbook}</if>
+            <if test="info != null  and info != ''">and info = #{info}</if>
+            <if test="summary != null  and summary != ''">and summary = #{summary}</if>
+            <if test="needUpgrade != null ">and need_upgrade = #{needUpgrade}</if>
+            <if test="alertUpgrade != null  and alertUpgrade != ''">and alert_upgrade = #{alertUpgrade}</if>
+            <if test="created != null ">and created = #{created}</if>
+            <if test="notifySender != null  and notifySender != ''">and notify_sender = #{notifySender}</if>
+            <if test="closeTime != null ">and close_time = #{closeTime}</if>
+            <if test="closer != null  and closer != ''">and closer = #{closer}</if>
+            <if test="hostId != null ">and host_id = #{hostId}</if>
+            <if test="alertTimes != null ">and alert_times = #{alertTimes}</if>
+            <if test="hostIdent != null  and hostIdent != ''">and host_ident = #{hostIdent}</if>
+            <if test="hostName != null  and hostName != ''">and host_name like concat('%', #{hostName}, '%')</if>
+            <if test="strategy != null  and strategy != ''">and strategy = #{strategy}</if>
+            <if test="notifyTimes != null ">and notify_times = #{notifyTimes}</if>
+            <if test="notifyTime != null ">and notify_time = #{notifyTime}</if>
+            <!-- Add -->
+            <if test="query != null and query != ''">and (host_name like concat('%', #{query}, '%') or host_ident like
+                concat('%', #{query}, '%'))
+            </if>
+            <if test="startTime != null and startTime != 0">and etime >= #{startTime}</if>
+            <if test="endTime != null and endTime != 0">and etime &lt;= #{endTime}</if>
+            <if test="priorityList != null and priorityList.size > 0">
+                and priority in
+                <foreach collection="priorityList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="endpointList != null and endpointList.size > 0">
+                and endpoint in
+                <foreach collection="endpointList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test='type != null and type == "home"'>
+                and event_type = 'alert'
+            </if>
+        </where>
+        order by field(event_type, 'noHost', 'noStrategy', 'stop', 'recovery', 'alert') desc, etime desc
+    </select>
+
+    <select id="selectEventById" parameterType="Long" resultMap="EventResult">
+        <include refid="selectEventVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertEvent" parameterType="com.uuc.alarm.domain.Event" useGeneratedKeys="true" keyProperty="id">
+        insert into event
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sid != null">sid,</if>
+            <if test="sname != null and sname != ''">sname,</if>
+            <if test="nodePath != null and nodePath != ''">node_path,</if>
+            <if test="nid != null">nid,</if>
+            <if test="endpoint != null and endpoint != ''">endpoint,</if>
+            <if test="endpointAlias != null and endpointAlias != ''">endpoint_alias,</if>
+            <if test="curNodePath != null and curNodePath != ''">cur_node_path,</if>
+            <if test="curNid != null and curNid != ''">cur_nid,</if>
+            <if test="priority != null">priority,</if>
+            <if test="eventType != null and eventType != ''">event_type,</if>
+            <if test="category != null">category,</if>
+            <if test="status != null">status,</if>
+            <if test="detail != null">detail,</if>
+            <if test="hashid != null and hashid != ''">hashid,</if>
+            <if test="etime != null">etime,</if>
+            <if test="value != null and value != ''">value,</if>
+            <if test="users != null and users != ''">users,</if>
+            <if test="groups != null and groups != ''">groups,</if>
+            <if test="runbook != null and runbook != ''">runbook,</if>
+            <if test="info != null and info != ''">info,</if>
+            <if test="summary != null and summary != ''">summary,</if>
+            <if test="needUpgrade != null">need_upgrade,</if>
+            <if test="alertUpgrade != null and alertUpgrade != ''">alert_upgrade,</if>
+            <if test="created != null">created,</if>
+            <if test="notifySender != null">notify_sender,</if>
+            <if test="closeTime != null">close_time,</if>
+            <if test="closer != null">closer,</if>
+            <if test="hostId != null">host_id,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="alertTimes != null">alert_times,</if>
+            <if test="hostIdent != null">host_ident,</if>
+            <if test="hostName != null">host_name,</if>
+            <if test="strategy != null">strategy,</if>
+            <if test="notifyTimes != null">notify_times,</if>
+            <if test="notifyTime != null">notify_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sid != null">#{sid},</if>
+            <if test="sname != null and sname != ''">#{sname},</if>
+            <if test="nodePath != null and nodePath != ''">#{nodePath},</if>
+            <if test="nid != null">#{nid},</if>
+            <if test="endpoint != null and endpoint != ''">#{endpoint},</if>
+            <if test="endpointAlias != null and endpointAlias != ''">#{endpointAlias},</if>
+            <if test="curNodePath != null and curNodePath != ''">#{curNodePath},</if>
+            <if test="curNid != null and curNid != ''">#{curNid},</if>
+            <if test="priority != null">#{priority},</if>
+            <if test="eventType != null and eventType != ''">#{eventType},</if>
+            <if test="category != null">#{category},</if>
+            <if test="status != null">#{status},</if>
+            <if test="detail != null">#{detail},</if>
+            <if test="hashid != null and hashid != ''">#{hashid},</if>
+            <if test="etime != null">#{etime},</if>
+            <if test="value != null and value != ''">#{value},</if>
+            <if test="users != null and users != ''">#{users},</if>
+            <if test="groups != null and groups != ''">#{groups},</if>
+            <if test="runbook != null and runbook != ''">#{runbook},</if>
+            <if test="info != null and info != ''">#{info},</if>
+            <if test="summary != null and summary != ''">#{summary},</if>
+            <if test="needUpgrade != null">#{needUpgrade},</if>
+            <if test="alertUpgrade != null and alertUpgrade != ''">#{alertUpgrade},</if>
+            <if test="created != null">#{created},</if>
+            <if test="notifySender != null">#{notifySender},</if>
+            <if test="closeTime != null">#{closeTime},</if>
+            <if test="closer != null">#{closer},</if>
+            <if test="hostId != null">#{hostId},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="alertTimes != null">#{alertTimes},</if>
+            <if test="hostIdent != null">#{hostIdent},</if>
+            <if test="hostName != null">#{hostName},</if>
+            <if test="strategy != null">#{strategy},</if>
+            <if test="notifyTimes != null">#{notifyTimes},</if>
+            <if test="notifyTime != null">#{notifyTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEvent" parameterType="com.uuc.alarm.domain.Event">
+        update event
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sid != null">sid = #{sid},</if>
+            <if test="sname != null and sname != ''">sname = #{sname},</if>
+            <if test="nodePath != null and nodePath != ''">node_path = #{nodePath},</if>
+            <if test="nid != null">nid = #{nid},</if>
+            <if test="endpoint != null and endpoint != ''">endpoint = #{endpoint},</if>
+            <if test="endpointAlias != null and endpointAlias != ''">endpoint_alias = #{endpointAlias},</if>
+            <if test="curNodePath != null and curNodePath != ''">cur_node_path = #{curNodePath},</if>
+            <if test="curNid != null and curNid != ''">cur_nid = #{curNid},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="eventType != null and eventType != ''">event_type = #{eventType},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="detail != null">detail = #{detail},</if>
+            <if test="hashid != null and hashid != ''">hashid = #{hashid},</if>
+            <if test="etime != null">etime = #{etime},</if>
+            <if test="value != null and value != ''">value = #{value},</if>
+            <if test="users != null and users != ''">users = #{users},</if>
+            <if test="groups != null and groups != ''">groups = #{groups},</if>
+            <if test="runbook != null and runbook != ''">runbook = #{runbook},</if>
+            <if test="info != null and info != ''">info = #{info},</if>
+            <if test="summary != null and summary != ''">summary = #{summary},</if>
+            <if test="needUpgrade != null">need_upgrade = #{needUpgrade},</if>
+            <if test="alertUpgrade != null and alertUpgrade != ''">alert_upgrade = #{alertUpgrade},</if>
+            <if test="created != null">created = #{created},</if>
+            <if test="notifySender != null">notify_sender = #{notifySender},</if>
+            <if test="closeTime != null">close_time = #{closeTime},</if>
+            <if test="closer != null">closer = #{closer},</if>
+            <if test="hostId != null">host_id = #{hostId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="alertTimes != null">alert_times = #{alertTimes},</if>
+            <if test="hostIdent != null">host_ident = #{hostIdent},</if>
+            <if test="hostName != null">host_name = #{hostName},</if>
+            <if test="strategy != null">strategy = #{strategy},</if>
+            <if test="notifyTimes != null">notify_times = #{notifyTimes},</if>
+            <if test="notifyTime != null">notify_time = #{notifyTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEventById" parameterType="Long">
+        delete
+        from event
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteEventByIds" parameterType="String">
+        delete from event where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="closeEvent" parameterType="com.uuc.alarm.domain.dto.EventDto">
+        update event
+        <trim prefix="SET" suffixOverrides=",">
+            event_type = 'stop',
+            close_time = #{dto.closeTime},
+            closer = #{dto.closer}
+        </trim>
+        <where>
+            <choose>
+                <when test="dto.ids != null and dto.ids.length > 0">
+                    and id in
+                    <foreach collection="dto.ids" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </when>
+                <otherwise>
+                    id = #{dto.id}
+                </otherwise>
+            </choose>
+        </where>
+    </update>
+
+    <select id="selectEventInfoById" parameterType="Long" resultMap="EventInfoPo">
+        select a.id,
+               a.strategy,
+               a.priority,
+               a.status,
+               a.users,
+               a.`groups`,
+               a.event_type,
+               a.created,
+               a.info,
+               a.summary,
+               a.sid,
+               b.stra_group_id,
+               a.close_time,
+               a.closer,
+               a.value
+        from event a
+                 left join stra b on a.sid = b.id
+        where a.id = #{id}
+    </select>
+
+    <select id="selectGroupListByPriority" parameterType="java.util.Set" resultMap="GroupPo">
+        select host_id, priority, count(1) count from event_cur
+        <where>
+            <if test="set != null and set.size > 0">
+                host_id in
+                <foreach collection="set" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by host_id, priority
+    </select>
+
+    <select id="selectGroupList" parameterType="java.util.Set" resultMap="GroupPo">
+        select host_id, count(1) count from event_cur
+        <where>
+            <if test="set != null and set.size > 0">
+                host_id in
+                <foreach collection="set" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by host_id
+    </select>
+</mapper>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucLoginAccountMapper">
+
+    <resultMap type="UucLoginAccount" id="UucLoginAccountResult">
+        <result property="id"    column="id"    />
+        <result property="userCode"    column="user_code"    />
+        <result property="accountType"    column="account_type"    />
+        <result property="loginAcct"    column="login_acct"    />
+        <result property="loginPwd"    column="login_pwd"    />
+        <result property="avatar"    column="avatar"    />
+        <result property="accountExpiredStatus"    column="account_expired_status"    />
+        <result property="passwdExpiredStatus"    column="passwd_expired_status"    />
+        <result property="accountLockedStatus"    column="account_locked_status"    />
+        <result property="active"    column="active"    />
+        <result property="enabled"    column="enabled"    />
+        <result property="pwdValidPeriodDate"    column="pwd_valid_period_date"    />
+        <result property="acctValidPeriodDate"    column="acct_valid_period_date"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectUucLoginAccountVo">
+        select id, user_code, account_type, login_acct, login_pwd, avatar, account_expired_status, passwd_expired_status, account_locked_status, active, enabled, pwd_valid_period_date, acct_valid_period_date, del_flag, create_time, create_by, update_time, update_by from uuc_login_account
+    </sql>
+
+    <select id="selectUucLoginAccountList" parameterType="UucLoginAccount" resultMap="UucLoginAccountResult">
+        <include refid="selectUucLoginAccountVo"/>
+        <where>
+            <if test="userCode != null  and userCode != ''"> and user_code = #{userCode}</if>
+            <if test="accountType != null  and accountType != ''"> and account_type = #{accountType}</if>
+            <if test="loginAcct != null  and loginAcct != ''"> and login_acct = #{loginAcct}</if>
+            <if test="loginPwd != null  and loginPwd != ''"> and login_pwd = #{loginPwd}</if>
+            <if test="avatar != null  and avatar != ''"> and avatar = #{avatar}</if>
+            <if test="accountExpiredStatus != null  and accountExpiredStatus != ''"> and account_expired_status = #{accountExpiredStatus}</if>
+            <if test="passwdExpiredStatus != null  and passwdExpiredStatus != ''"> and passwd_expired_status = #{passwdExpiredStatus}</if>
+            <if test="accountLockedStatus != null  and accountLockedStatus != ''"> and account_locked_status = #{accountLockedStatus}</if>
+            <if test="active != null  and active != ''"> and active = #{active}</if>
+            <if test="enabled != null  and enabled != ''"> and enabled = #{enabled}</if>
+            <if test="pwdValidPeriodDate != null "> and pwd_valid_period_date = #{pwdValidPeriodDate}</if>
+            <if test="acctValidPeriodDate != null "> and acct_valid_period_date = #{acctValidPeriodDate}</if>
+        </where>
+        and del_flag='0'
+    </select>
+
+    <select id="selectUucLoginAccountById" parameterType="Long" resultMap="UucLoginAccountResult">
+        <include refid="selectUucLoginAccountVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectUucLoginAccountByCode" parameterType="Long" resultMap="UucLoginAccountResult">
+        <include refid="selectUucLoginAccountVo"/>
+        where user_code = #{userCode}
+    </select>
+
+    <insert id="insertUucLoginAccount" parameterType="UucLoginAccount">
+        insert into uuc_login_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userCode != null and userCode != ''">user_code,</if>
+            <if test="accountType != null and accountType != ''">account_type,</if>
+            <if test="loginAcct != null and loginAcct != ''">login_acct,</if>
+            <if test="loginPwd != null and loginPwd != ''">login_pwd,</if>
+            <if test="avatar != null">avatar,</if>
+            <if test="accountExpiredStatus != null and accountExpiredStatus != ''">account_expired_status,</if>
+            <if test="passwdExpiredStatus != null and passwdExpiredStatus != ''">passwd_expired_status,</if>
+            <if test="accountLockedStatus != null and accountLockedStatus != ''">account_locked_status,</if>
+            <if test="active != null and active != ''">active,</if>
+            <if test="enabled != null and enabled != ''">enabled,</if>
+            <if test="pwdValidPeriodDate != null">pwd_valid_period_date,</if>
+            <if test="acctValidPeriodDate != null">acct_valid_period_date,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userCode != null and userCode != ''">#{userCode},</if>
+            <if test="accountType != null and accountType != ''">#{accountType},</if>
+            <if test="loginAcct != null and loginAcct != ''">#{loginAcct},</if>
+            <if test="loginPwd != null and loginPwd != ''">#{loginPwd},</if>
+            <if test="avatar != null">#{avatar},</if>
+            <if test="accountExpiredStatus != null and accountExpiredStatus != ''">#{accountExpiredStatus},</if>
+            <if test="passwdExpiredStatus != null and passwdExpiredStatus != ''">#{passwdExpiredStatus},</if>
+            <if test="accountLockedStatus != null and accountLockedStatus != ''">#{accountLockedStatus},</if>
+            <if test="active != null and active != ''">#{active},</if>
+            <if test="enabled != null and enabled != ''">#{enabled},</if>
+            <if test="pwdValidPeriodDate != null">#{pwdValidPeriodDate},</if>
+            <if test="acctValidPeriodDate != null">#{acctValidPeriodDate},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucLoginAccount" parameterType="UucLoginAccount">
+        update uuc_login_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accountType != null and accountType != ''">account_type = #{accountType},</if>
+            <if test="loginAcct != null and loginAcct != ''">login_acct = #{loginAcct},</if>
+            <if test="loginPwd != null and loginPwd != ''">login_pwd = #{loginPwd},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="accountExpiredStatus != null and accountExpiredStatus != ''">account_expired_status = #{accountExpiredStatus},</if>
+            <if test="passwdExpiredStatus != null and passwdExpiredStatus != ''">passwd_expired_status = #{passwdExpiredStatus},</if>
+            <if test="accountLockedStatus != null and accountLockedStatus != ''">account_locked_status = #{accountLockedStatus},</if>
+            <if test="active != null and active != ''">active = #{active},</if>
+            <if test="enabled != null and enabled != ''">enabled = #{enabled},</if>
+            <if test="pwdValidPeriodDate != null">pwd_valid_period_date = #{pwdValidPeriodDate},</if>
+            <if test="acctValidPeriodDate != null">acct_valid_period_date = #{acctValidPeriodDate},</if>
+            <if test="delFlag != null and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where user_code = #{userCode}
+    </update>
+
+    <delete id="deleteUucLoginAccountById" parameterType="Long">
+        update uuc_login_account set del_flag = '1' where user_code = #{id}
+    </delete>
+
+    <delete id="deleteUucLoginAccountByIds" parameterType="String">
+        update uuc_login_account set del_flag = '1' where user_code in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insertUucLoginAccountBatch">
+        insert into uuc_login_account (
+            user_code, account_type, login_acct, login_pwd, account_expired_status,
+            passwd_expired_status, account_locked_status, active, enabled, pwd_valid_period_date,
+            acct_valid_period_date, status, del_flag, create_time, create_by,
+            update_time, update_by
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.userCode},#{item.accountType},#{item.loginAcct},#{item.loginPwd},#{item.accountExpiredStatus},
+            #{item.passwdExpiredStatus},#{item.accountLockedStatus},#{item.active},#{item.enabled},#{item.pwdValidPeriodDate},
+            #{item.acctValidPeriodDate},#{item.status},#{item.delFlag},#{item.createTime},#{item.createBy},
+            #{item.updateTime},#{item.updateBy})
+        </foreach>
+    </insert>
+
+    <select id="checkLoginAcctUnique" parameterType="String" resultType="int">
+        select count(1) from uuc_login_account
+        where del_flag = '0' and login_acct in
+        <foreach item="loginAcct" collection="array" open="(" separator="," close=")">
+            #{loginAcct}
+        </foreach>
+    </select>
+
+    <update id="resetUserPwd" parameterType="UucLoginAccount">
+        update uuc_login_account
+            set login_pwd = #{loginPwd}, update_by = #{updateBy}, update_time = #{updateTime}
+        where user_code = #{userCode}
+    </update>
+
+    <delete id="deleteByUserCode">
+        delete from uuc_login_account where user_code = #{userCode}
+    </delete>
+
+    <select id="selectByUserId" resultMap="UucLoginAccountResult">
+        select * from uuc_login_account where user_code = #{userInfoId}
+    </select>
+
+    <delete id="deleteDingAccountByIds">
+        delete from uuc_login_account where account_type = '01' and  user_code in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

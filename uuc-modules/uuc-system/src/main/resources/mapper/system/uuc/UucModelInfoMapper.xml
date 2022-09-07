@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucModelInfoMapper">
+    
+    <resultMap type="UucModelInfo" id="UucModelInfoResult">
+        <result property="id"    column="id"    />
+        <result property="clientId"    column="client_id"    />
+        <result property="clientName"    column="client_name"    />
+        <result property="clientRsaPrivate"    column="client_rsa_private"    />
+        <result property="clientRsaPublic"    column="client_rsa_public"    />
+        <result property="baseUrl"    column="base_url"    />
+        <result property="clientSecret"    column="client_secret"    />
+        <result property="deptCode"    column="dept_code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="deptName"    column="dept_name"    />
+    </resultMap>
+
+    <sql id="selectUucModelInfoVo">
+        select id, client_id, client_name, client_rsa_private, client_rsa_public, base_url, client_secret,dept_code,create_by, create_time, update_by, update_time from uuc_model_info
+    </sql>
+
+    <select id="selectUucModelInfoList" parameterType="UucModelInfo" resultMap="UucModelInfoResult">
+        select u.id, u.client_id, u.client_name, u.client_rsa_private, u.client_rsa_public, u.base_url, u.client_secret,u.dept_code,u.create_by, u.create_time, u.update_by, u.update_time,d.dept_name from uuc_model_info u
+        left join uuc_dept_info d on u.dept_code=d.id
+        <where>  
+            <if test="clientId != null  and clientId != ''"> and u.client_id = #{clientId}</if>
+            <if test="clientName != null  and clientName != ''"> and u.client_name like concat('%', #{clientName}, '%')</if>
+            <if test="clientRsaPrivate != null  and clientRsaPrivate != ''"> and u.client_rsa_private = #{clientRsaPrivate}</if>
+            <if test="clientRsaPublic != null  and clientRsaPublic != ''"> and u.client_rsa_public = #{clientRsaPublic}</if>
+            <if test="baseUrl != null  and baseUrl != ''"> and u.base_url = #{baseUrl}</if>
+        </where>
+    </select>
+    
+    <select id="selectUucModelInfoById" parameterType="Long" resultMap="UucModelInfoResult">
+        <include refid="selectUucModelInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertUucModelInfo" parameterType="UucModelInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into uuc_model_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">client_id,</if>
+            <if test="clientName != null">client_name,</if>
+            <if test="clientRsaPrivate != null">client_rsa_private,</if>
+            <if test="clientRsaPublic != null">client_rsa_public,</if>
+            <if test="baseUrl != null">base_url,</if>
+            <if test="clientSecret != null">client_secret,</if>
+            <if test="deptCode != null">dept_code,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientId != null">#{clientId},</if>
+            <if test="clientName != null">#{clientName},</if>
+            <if test="clientRsaPrivate != null">#{clientRsaPrivate},</if>
+            <if test="clientRsaPublic != null">#{clientRsaPublic},</if>
+            <if test="baseUrl != null">#{baseUrl},</if>
+            <if test="clientSecret != null">#{clientSecret},</if>
+            <if test="deptCode != null">#{deptCode},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucModelInfo" parameterType="UucModelInfo">
+        update uuc_model_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="clientId != null">client_id = #{clientId},</if>
+            <if test="clientName != null">client_name = #{clientName},</if>
+            <if test="clientRsaPrivate != null">client_rsa_private = #{clientRsaPrivate},</if>
+            <if test="clientRsaPublic != null">client_rsa_public = #{clientRsaPublic},</if>
+            <if test="baseUrl != null">base_url = #{baseUrl},</if>
+            <if test="clientSecret != null">client_secret = #{clientSecret},</if>
+            <if test="deptCode != null">dept_code = #{deptCode},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucModelInfoById" parameterType="Long">
+        delete from uuc_model_info where id = #{id}
+    </delete>
+
+    <delete id="deleteUucModelInfoByIds" parameterType="String">
+        delete from uuc_model_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectUucModelInfoByCLientId" parameterType="String" resultMap="UucModelInfoResult">
+        <include refid="selectUucModelInfoVo"/> where client_id = #{clientId}
+    </select>
+</mapper>

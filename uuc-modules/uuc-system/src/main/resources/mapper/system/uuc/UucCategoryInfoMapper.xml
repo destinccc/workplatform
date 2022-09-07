@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucCategoryInfoMapper">
+    
+    <resultMap type="UucCategoryInfo" id="UucCategoryInfoResult">
+        <result property="id"    column="id"    />
+        <result property="categoryName"    column="category_name"    />
+        <result property="categoryOrder"    column="category_order"    />
+        <result property="categoryLabel"    column="category_label"    />
+         <result property="icon"           column="icon"           />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remark"    column="remark"    />
+        <result property="type"    column="type"    />
+        <collection  property="sysMenus"   javaType="java.util.List"        resultMap="SysMenuResult" />
+    </resultMap>
+
+    <resultMap type="SysMenu" id="SysMenuResult">
+        <id     property="menuId"         column="menu_id"        />
+        <result property="menuName"       column="menu_name"      />
+        <result property="parentName"     column="parent_name"    />
+        <result property="parentId"       column="parent_id"      />
+        <result property="orderNum"       column="order_num"      />
+        <result property="path"           column="path"           />
+        <result property="component"      column="component"      />
+        <result property="query"          column="query"          />
+        <result property="isFrame"        column="is_frame"       />
+        <result property="isCache"        column="is_cache"       />
+        <result property="menuType"       column="menu_type"      />
+        <result property="visible"        column="visible"        />
+        <result property="status"         column="status"         />
+        <result property="perms"          column="perms"          />
+        <result property="icon"           column="icon1"           />
+        <result property="createBy"       column="create_by"      />
+        <result property="createTime"     column="create_time"    />
+        <result property="updateTime"     column="update_time"    />
+        <result property="updateBy"       column="update_by"      />
+        <result property="remark"         column="remark1"         />
+        <result property="clientId"       column="client_id"      />
+        <result property="innerIdentifier"         column="inner_identifier"  />
+        <result property="imageContent"         column="image_content"  />
+    </resultMap>
+
+    <resultMap id="UucCategoryInfoUucCategoryMenuResult" type="UucCategoryInfo" extends="UucCategoryInfoResult">
+        <collection property="uucCategoryMenuList" notNullColumn="sub_id" javaType="java.util.List" resultMap="UucCategoryMenuResult" />
+    </resultMap>
+
+    <resultMap type="UucCategoryMenu" id="UucCategoryMenuResult">
+        <result property="id"    column="sub_id"    />
+        <result property="categoryId"    column="sub_category_id"    />
+        <result property="menuId"    column="sub_menu_id"    />
+        <result property="imageContent"    column="sub_image_content"    />
+        <result property="orderNum"    column="sub_order_num"    />
+        <result property="showName"    column="sub_show_name"    />
+    </resultMap>
+
+    <sql id="selectUucCategoryInfoVo">
+        select id, category_name, category_order, category_label,icon, create_time, create_by, update_time, update_by, remark from uuc_category_info
+    </sql>
+    <select id="selectUucCategoryInfoListVo" resultMap="UucCategoryInfoResult">
+        select a.id, a.category_name,  a.category_order,  a.category_label,a.icon,a.create_time,  a.create_by, a.update_time, a.update_by, a.remark,a.type,s.menu_id,s.menu_name,
+               s.parent_id,s.order_num,s.path,s.component,s.query,s.is_frame,s.menu_type,s.visible,s.status,s.perms,s.icon as icon1,s.client_id,s.remark as remark1,b.image_content
+               from uuc_category_info a
+            left join uuc_category_menu b on b.category_id = a.id left join sys_menu s on b.menu_id =s.menu_id ORDER BY a.category_order,s.order_num asc
+    </select>
+    <select id="selectUucCategoryInfoList" parameterType="UucCategoryInfo" resultMap="UucCategoryInfoResult">
+
+        <include refid="selectUucCategoryInfoVo"/>
+        <where>  
+            <if test="categoryName != null  and categoryName != ''"> and category_name like concat('%', #{categoryName}, '%')</if>
+            <if test="categoryOrder != null "> and category_order = #{categoryOrder}</if>
+            <if test="categoryLabel != null  and categoryLabel != ''"> and category_label = #{categoryLabel}</if>
+        </where>
+    </select>
+    
+    <select id="selectUucCategoryInfoById" parameterType="Long" resultMap="UucCategoryInfoUucCategoryMenuResult">
+        select a.id, a.category_name, a.category_order, a.category_label, a.create_time, a.create_by, a.update_time, a.update_by, a.remark,a.type,a.icon,b.image_content as sub_image_content,
+         b.id as sub_id, b.category_id as sub_category_id, b.menu_id as sub_menu_id,b.order_num as sub_order_num,b.show_name as sub_show_name
+        from uuc_category_info a
+        left join uuc_category_menu b on b.category_id = a.id
+        where a.id = #{id}
+    </select>
+        
+    <insert id="insertUucCategoryInfo" parameterType="UucCategoryInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into uuc_category_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null and categoryName != ''">category_name,</if>
+            <if test="categoryOrder != null">category_order,</if>
+            <if test="categoryLabel != null">category_label,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+            <if test="type != null">type,</if>
+            <if test="icon != null">icon,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null and categoryName != ''">#{categoryName},</if>
+            <if test="categoryOrder != null">#{categoryOrder},</if>
+            <if test="categoryLabel != null">#{categoryLabel},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="type != null">#{type},</if>
+            <if test="icon != null">#{icon},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucCategoryInfo" parameterType="UucCategoryInfo">
+        update uuc_category_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryName != null and categoryName != ''">category_name = #{categoryName},</if>
+            <if test="categoryOrder != null">category_order = #{categoryOrder},</if>
+            <if test="categoryLabel != null">category_label = #{categoryLabel},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="icon != null">icon = #{icon},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucCategoryInfoById" parameterType="Long">
+        delete from uuc_category_info where id = #{id}
+    </delete>
+
+    <delete id="deleteUucCategoryInfoByIds" parameterType="String">
+        delete from uuc_category_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteUucCategoryMenuByCategoryIds" parameterType="String">
+        delete from uuc_category_menu where category_id in 
+        <foreach item="categoryId" collection="array" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteUucCategoryMenuByCategoryId" parameterType="Long">
+        delete from uuc_category_menu where category_id = #{categoryId}
+    </delete>
+
+    <insert id="batchUucCategoryMenu">
+        insert into uuc_category_menu( id, category_id, menu_id) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.categoryId}, #{item.menuId})
+        </foreach>
+    </insert>
+</mapper>

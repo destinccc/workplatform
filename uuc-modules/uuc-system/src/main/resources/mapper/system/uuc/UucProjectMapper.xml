@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucProjectMapper">
+
+    <resultMap type="UucProject" id="UucProjectResult">
+        <result property="id"    column="id"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="shortName"    column="short_name"    />
+<!--        <result property="projectStatus"    column="project_status"    />-->
+        <result property="projectStartDate"    column="project_start_date"    />
+        <result property="projectEndDate"    column="project_end_date"    />
+        <result property="projectDesc"    column="project_desc"    />
+        <result property="ownDeptCode"    column="own_dept_code"    />
+        <result property="projectArchiveCode"    column="project_archive_code"    />
+<!--        <result property="parentCode"    column="parent_code"    />-->
+<!--        <result property="level"    column="level"    />-->
+<!--        <result property="ancestors"    column="ancestors"    />-->
+<!--        <result property="orderNum"    column="order_num"    />-->
+<!--        <result property="pmUserCode"    column="pm_user_code"    />-->
+        <result property="projectGoal"    column="project_goal"    />
+        <result property="projectBudget"    column="project_budget"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+
+        <result property="projectType"    column="project_type"    />
+        <result property="projectSource"    column="project_source"    />
+        <result property="projectLevel"    column="project_level"    />
+        <result property="applicant"    column="applicant"    />
+        <result property="version"    column="version"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectUucProjectVo">
+        select
+            p.id, p.project_code, p.project_name, p.short_name, p.project_status, p.project_start_date, p.project_end_date, p.project_desc, p.own_dept_code, p.project_archive_code,
+            p.parent_code, p.level, p.ancestors, p.order_num, p.pm_user_code, p.project_goal, p.project_budget, p.create_time, p.create_by, p.update_time, p.update_by,
+            p.project_type, d.dept_name as deptName, p.project_source, p.project_level, p.applicant, p.version, p.remark, group_concat(pd.dept_name) as useDeptNames
+        from uuc_project p
+        left join uuc_dept_info d on p.own_dept_code = d.id
+        left join
+            (
+                select a.*, b.dept_name from uuc_project_dept a
+                left join uuc_dept_info b on a.dept_code = b.id
+            )  pd on p.id = pd.project_code
+    </sql>
+
+    <select id="selectUucProjectList" parameterType="UucProject" resultMap="UucProjectResult">
+        <include refid="selectUucProjectVo"/>
+        <where>
+            <if test="projectCode != null  and projectCode != ''"> and p.project_code = #{projectCode}</if>
+            <if test="projectName != null  and projectName != ''"> and p.project_name like concat('%', #{projectName}, '%')</if>
+            <if test="shortName != null  and shortName != ''"> and p.short_name like concat('%', #{shortName}, '%')</if>
+<!--            <if test="projectStatus != null  and projectStatus != ''"> and p.project_status = #{projectStatus}</if>-->
+            <if test="projectStartDate != null "> and p.project_start_date = #{projectStartDate}</if>
+            <if test="projectEndDate != null "> and p.project_end_date = #{projectEndDate}</if>
+            <if test="projectDesc != null  and projectDesc != ''"> and p.project_desc = #{projectDesc}</if>
+            <if test="ownDeptCode != null  and ownDeptCode != ''">
+                AND (d.id = #{ownDeptCode} OR d.id IN ( SELECT t.id FROM uuc_dept_info t WHERE find_in_set(#{ownDeptCode}, ancestors) ))
+            </if>
+            <if test="projectArchiveCode != null  and projectArchiveCode != ''"> and p.project_archive_code = #{projectArchiveCode}</if>
+<!--            <if test="parentCode != null  and parentCode != ''"> and p.parent_code = #{parentCode}</if>-->
+<!--            <if test="level != null "> and p.level = #{level}</if>-->
+<!--            <if test="ancestors != null  and ancestors != ''"> and p.ancestors = #{ancestors}</if>-->
+<!--            <if test="orderNum != null "> and p.order_num = #{orderNum}</if>-->
+<!--            <if test="pmUserCode != null  and pmUserCode != ''"> and p.pm_user_code = #{pmUserCode}</if>-->
+            <if test="projectGoal != null  and projectGoal != ''"> and p.project_goal = #{projectGoal}</if>
+            <if test="projectBudget != null "> and p.project_budget = #{projectBudget}</if>
+
+        </where>
+        group by p.id
+    </select>
+
+    <select id="selectUucProjectById" parameterType="Long" resultMap="UucProjectResult">
+        select
+        p.id, p.project_code, p.project_name, p.short_name, p.project_start_date, p.project_end_date, p.project_desc, p.own_dept_code, p.project_archive_code,
+        p.project_goal, p.project_budget, p.create_time, p.create_by, p.update_time, p.update_by,
+        p.project_type, d.dept_name as deptName, p.project_source, p.project_level, p.applicant, p.version, p.remark, group_concat(pd.dept_code) as useDeptIds
+        from uuc_project p
+        left join uuc_dept_info d on p.own_dept_code = d.id
+        left join uuc_project_dept pd on p.id = pd.project_code
+        where p.id = #{id}
+        group by p.id
+    </select>
+
+    <insert id="insertUucProject" parameterType="UucProject" useGeneratedKeys="true" keyProperty="id">
+        insert into uuc_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">id,</if>
+            <if test="projectCode != null and projectCode != ''">project_code,</if>
+            <if test="projectName != null and projectName != ''">project_name,</if>
+            <if test="shortName != null and shortName != ''">short_name,</if>
+<!--            <if test="projectStatus != null">project_status,</if>-->
+            <if test="projectStartDate != null">project_start_date,</if>
+            <if test="projectEndDate != null">project_end_date,</if>
+            <if test="projectDesc != null">project_desc,</if>
+            <if test="ownDeptCode != null and ownDeptCode != ''">own_dept_code,</if>
+            <if test="projectArchiveCode != null">project_archive_code,</if>
+<!--            <if test="parentCode != null">parent_code,</if>-->
+<!--            <if test="level != null">level,</if>-->
+<!--            <if test="ancestors != null and ancestors != ''">ancestors,</if>-->
+<!--            <if test="orderNum != null">order_num,</if>-->
+<!--            <if test="pmUserCode != null">pm_user_code,</if>-->
+            <if test="projectGoal != null">project_goal,</if>
+            <if test="projectBudget != null">project_budget,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="projectType != null">project_type,</if>
+
+            <if test="projectSource != null">project_source,</if>
+            <if test="projectLevel != null">project_level,</if>
+            <if test="applicant != null">applicant,</if>
+            <if test="version != null">version,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">#{id},</if>
+            <if test="projectCode != null and projectCode != ''">#{projectCode},</if>
+            <if test="projectName != null and projectName != ''">#{projectName},</if>
+            <if test="shortName != null and shortName != ''">#{shortName},</if>
+<!--            <if test="projectStatus != null">#{projectStatus},</if>-->
+            <if test="projectStartDate != null">#{projectStartDate},</if>
+            <if test="projectEndDate != null">#{projectEndDate},</if>
+            <if test="projectDesc != null">#{projectDesc},</if>
+            <if test="ownDeptCode != null and ownDeptCode != ''">#{ownDeptCode},</if>
+            <if test="projectArchiveCode != null">#{projectArchiveCode},</if>
+<!--            <if test="parentCode != null">#{parentCode},</if>-->
+<!--            <if test="level != null">#{level},</if>-->
+<!--            <if test="ancestors != null and ancestors != ''">#{ancestors},</if>-->
+<!--            <if test="orderNum != null">#{orderNum},</if>-->
+<!--            <if test="pmUserCode != null">#{pmUserCode},</if>-->
+            <if test="projectGoal != null">#{projectGoal},</if>
+            <if test="projectBudget != null">#{projectBudget},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="projectType != null">#{projectType},</if>
+
+            <if test="projectSource != null">#{projectSource},</if>
+            <if test="projectLevel != null">#{projectLevel},</if>
+            <if test="applicant != null">#{applicant},</if>
+            <if test="version != null">#{version},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucProject" parameterType="UucProject">
+        update uuc_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectCode != null and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
+            <if test="shortName != null and shortName != ''">short_name = #{shortName},</if>
+<!--            <if test="projectStatus != null">project_status = #{projectStatus},</if>-->
+            <if test="projectStartDate != null">project_start_date = #{projectStartDate},</if>
+            <if test="projectEndDate != null">project_end_date = #{projectEndDate},</if>
+            <if test="projectDesc != null">project_desc = #{projectDesc},</if>
+            <if test="ownDeptCode != null and ownDeptCode != ''">own_dept_code = #{ownDeptCode},</if>
+            <if test="projectArchiveCode != null">project_archive_code = #{projectArchiveCode},</if>
+<!--            <if test="parentCode != null">parent_code = #{parentCode},</if>-->
+<!--            <if test="level != null">level = #{level},</if>-->
+<!--            <if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>-->
+<!--            <if test="orderNum != null">order_num = #{orderNum},</if>-->
+<!--            <if test="pmUserCode != null">pm_user_code = #{pmUserCode},</if>-->
+            <if test="projectGoal != null">project_goal = #{projectGoal},</if>
+            <if test="projectBudget != null">project_budget = #{projectBudget},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="projectType != null">project_type = #{projectType},</if>
+
+            <if test="projectSource != null">project_source = #{projectSource},</if>
+            <if test="projectLevel != null">project_level = #{projectLevel},</if>
+            <if test="applicant != null">applicant = #{applicant},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucProjectById" parameterType="Long">
+        delete from uuc_project where id = #{id}
+    </delete>
+
+    <delete id="deleteUucProjectByIds" parameterType="String">
+        delete from uuc_project where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectAllProjects" resultMap="UucProjectResult">
+        <include refid="selectUucProjectVo"/>
+        group by p.id
+    </select>
+
+    <select id="selectChildrenProjectsByParentId" parameterType="Long" resultType="List">
+        SELECT t.id FROM uuc_project t WHERE find_in_set(#{id}, parent_code)
+    </select>
+
+    <select id="checkProjectCodeUnique" parameterType="String" resultType="java.lang.Integer">
+        select count(1) from uuc_project where project_code = #{projectCode}
+    </select>
+
+</mapper>

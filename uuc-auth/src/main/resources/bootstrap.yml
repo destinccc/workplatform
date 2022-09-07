@@ -1,0 +1,22 @@
+# Tomcat
+
+server:
+  port: 9200
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: uuc-auth
+  profiles:
+    # 环境配置
+    active: @profiles.active@
+
+knife4j:
+  enable: true
+  production: true
+  basic:
+    # 默认设置false不开放文档, 设置为true鉴权后开放
+    enable: false
+    username: admin
+    password: admin123

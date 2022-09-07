@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UccUserRoleMapper">
+    
+    <resultMap type="UccUserRole" id="UccUserRoleResult">
+        <result property="userCode"    column="user_code"    />
+        <result property="roleId"    column="role_id"    />
+    </resultMap>
+
+    <sql id="selectUccUserRoleVo">
+        select user_code, role_id from ucc_user_role
+    </sql>
+
+    <select id="selectUccUserRoleList" parameterType="UccUserRole" resultMap="UccUserRoleResult">
+        <include refid="selectUccUserRoleVo"/>
+        <where>  
+            <if test="userCode != null  and userCode != ''"> and user_code = #{userCode}</if>
+            <if test="roleId != null "> and role_id = #{roleId}</if>
+        </where>
+    </select>
+    
+    <select id="selectUccUserRoleByUserCode" parameterType="String" resultMap="UccUserRoleResult">
+        <include refid="selectUccUserRoleVo"/>
+        where user_code = #{userCode}
+    </select>
+        
+    <insert id="insertUccUserRole" parameterType="UccUserRole">
+        insert into ucc_user_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userCode != null">user_code,</if>
+            <if test="roleId != null">role_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userCode != null">#{userCode},</if>
+            <if test="roleId != null">#{roleId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUccUserRole" parameterType="UccUserRole">
+        update ucc_user_role
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="roleId != null">role_id = #{roleId},</if>
+        </trim>
+        where user_code = #{userCode}
+    </update>
+
+    <delete id="deleteUccUserRoleByUserCode" parameterType="String">
+        delete from ucc_user_role where user_code = #{userCode}
+    </delete>
+
+    <delete id="deleteUccUserRoleByUserCodes" parameterType="String">
+        delete from ucc_user_role where user_code in 
+        <foreach item="userCode" collection="array" open="(" separator="," close=")">
+            #{userCode}
+        </foreach>
+    </delete>
+</mapper>

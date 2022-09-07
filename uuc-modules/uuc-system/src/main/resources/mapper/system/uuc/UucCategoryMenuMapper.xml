@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucCategoryMenuMapper">
+    
+    <resultMap type="UucCategoryMenu" id="UucCategoryMenuResult">
+        <result property="id"    column="id"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="menuId"    column="menu_id"    />
+        <result property="imageContent"    column="image_content"    />
+        <result property="path"    column="path"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="showName"    column="show_name"    />
+    </resultMap>
+
+    <sql id="selectUucCategoryMenuVo">
+        select id, category_id, menu_id,image_content,path,order_num,show_name from uuc_category_menu
+    </sql>
+
+    <select id="selectUucCategoryMenuList" parameterType="UucCategoryMenu" resultMap="UucCategoryMenuResult">
+        <include refid="selectUucCategoryMenuVo"/>
+        <where>  
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+            <if test="menuId != null "> and menu_id = #{menuId}</if>
+        </where>
+    </select>
+    
+    <select id="selectUucCategoryMenuById" parameterType="Long" resultMap="UucCategoryMenuResult">
+        <include refid="selectUucCategoryMenuVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertUucCategoryMenu" parameterType="UucCategoryMenu" useGeneratedKeys="true" keyProperty="id">
+        insert into uuc_category_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">category_id,</if>
+            <if test="menuId != null">menu_id,</if>
+            <if test="path != null">path,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="showName != null">show_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="menuId != null">#{menuId},</if>
+            <if test="path != null">#{path},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="showName != null">#{showName},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertList"  parameterType="java.util.List">
+        insert into uuc_category_menu
+        (category_id,menu_id,image_content,path,order_num,show_name)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (
+            #{item.categoryId},
+            #{item.menuId},
+            #{item.imageContent},
+            #{item.path},
+             #{item.orderNum},
+             #{item.showName}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateUucCategoryMenu" parameterType="UucCategoryMenu">
+        update uuc_category_menu
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="menuId != null">menu_id = #{menuId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucCategoryMenuById" parameterType="Long">
+        delete from uuc_category_menu where id = #{id}
+    </delete>
+
+    <delete id="deleteUucCategoryMenuByIds" parameterType="String">
+        delete from uuc_category_menu where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteUucCategoryMenuByCategoryId" parameterType="Long">
+        delete from uuc_category_menu where category_id = #{categoryId}
+    </delete>
+</mapper>

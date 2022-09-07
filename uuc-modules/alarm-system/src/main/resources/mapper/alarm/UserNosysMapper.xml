@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.alarm.mapper.UserNosysMapper">
+
+    <resultMap type="com.uuc.alarm.domain.UserNosys" id="UserNosysResult">
+        <result property="id" column="id"/>
+        <result property="uuid" column="uuid"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="passwords" column="passwords"/>
+        <result property="dispname" column="dispname"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="im" column="im"/>
+        <result property="portrait" column="portrait"/>
+        <result property="intro" column="intro"/>
+        <result property="organization" column="organization"/>
+        <result property="typ" column="typ"/>
+        <result property="status" column="status"/>
+        <result property="isRoot" column="is_root"/>
+        <result property="leaderId" column="leader_id"/>
+        <result property="leaderName" column="leader_name"/>
+        <result property="loginErrNum" column="login_err_num"/>
+        <result property="activeBegin" column="active_begin"/>
+        <result property="activeEnd" column="active_end"/>
+        <result property="lockedAt" column="locked_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="pwdUpdatedAt" column="pwd_updated_at"/>
+        <result property="loggedAt" column="logged_at"/>
+        <result property="createAt" column="create_at"/>
+        <result property="userType" column="user_type"/>
+        <result property="creatorId" column="creator_id"/>
+        <result property="creator" column="creator"/>
+        <result property="organizationId" column="organization_id"/>
+    </resultMap>
+
+    <sql id="selectUserNosysVo">
+        select id,
+               uuid,
+               username,
+               password,
+               passwords,
+               dispname,
+               phone,
+               email,
+               im,
+               portrait,
+               intro,
+               organization,
+               typ,
+               status,
+               is_root,
+               leader_id,
+               leader_name,
+               login_err_num,
+               active_begin,
+               active_end,
+               locked_at,
+               updated_at,
+               pwd_updated_at,
+               logged_at,
+               create_at,
+               user_type,
+               creator_id,
+               creator,
+               organization_id
+        from user_nosys
+    </sql>
+
+    <select id="selectUserNosysList" parameterType="com.uuc.alarm.domain.UserNosys" resultMap="UserNosysResult">
+        <include refid="selectUserNosysVo"/>
+        <where>
+            <if test="uuid != null  and uuid != ''">and uuid = #{uuid}</if>
+            <if test="username != null  and username != ''">and username like concat('%', #{username}, '%')</if>
+            <if test="password != null  and password != ''">and password = #{password}</if>
+            <if test="passwords != null  and passwords != ''">and passwords = #{passwords}</if>
+            <if test="dispname != null  and dispname != ''">and dispname like concat('%', #{dispname}, '%')</if>
+            <if test="phone != null  and phone != ''">and phone = #{phone}</if>
+            <if test="email != null  and email != ''">and email = #{email}</if>
+            <if test="im != null  and im != ''">and im = #{im}</if>
+            <if test="portrait != null  and portrait != ''">and portrait = #{portrait}</if>
+            <if test="intro != null  and intro != ''">and intro = #{intro}</if>
+            <if test="organization != null  and organization != ''">and organization = #{organization}</if>
+            <if test="typ != null ">and typ = #{typ}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="isRoot != null ">and is_root = #{isRoot}</if>
+            <if test="leaderId != null ">and leader_id = #{leaderId}</if>
+            <if test="leaderName != null  and leaderName != ''">and leader_name like concat('%', #{leaderName}, '%')
+            </if>
+            <if test="loginErrNum != null ">and login_err_num = #{loginErrNum}</if>
+            <if test="activeEnd != null ">and active_end = #{activeEnd}</if>
+            <if test="lockedAt != null ">and locked_at = #{lockedAt}</if>
+            <if test="updatedAt != null ">and updated_at = #{updatedAt}</if>
+            <if test="pwdUpdatedAt != null ">and pwd_updated_at = #{pwdUpdatedAt}</if>
+            <if test="loggedAt != null ">and logged_at = #{loggedAt}</if>
+            <if test="createAt != null ">and create_at = #{createAt}</if>
+            <if test="userType != null ">and user_type = #{userType}</if>
+            <if test="creatorId != null ">and creator_id = #{creatorId}</if>
+            <if test="creator != null  and creator != ''">and creator = #{creator}</if>
+            <if test="organizationId != null  and organizationId != ''">and organization_id = #{organizationId}</if>
+        </where>
+    </select>
+
+    <select id="selectUserNosysById" parameterType="Integer" resultMap="UserNosysResult">
+        <include refid="selectUserNosysVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertUserNosys" parameterType="com.uuc.alarm.domain.UserNosys" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into user_nosys
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uuid != null and uuid != ''">uuid,</if>
+            <if test="username != null and username != ''">username,</if>
+            <if test="password != null and password != ''">password,</if>
+            <if test="passwords != null and passwords != ''">passwords,</if>
+            <if test="dispname != null and dispname != ''">dispname,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="im != null and im != ''">im,</if>
+            <if test="portrait != null and portrait != ''">portrait,</if>
+            <if test="intro != null and intro != ''">intro,</if>
+            <if test="organization != null and organization != ''">organization,</if>
+            <if test="typ != null">typ,</if>
+            <if test="status != null">status,</if>
+            <if test="isRoot != null">is_root,</if>
+            <if test="leaderId != null">leader_id,</if>
+            <if test="leaderName != null and leaderName != ''">leader_name,</if>
+            <if test="loginErrNum != null">login_err_num,</if>
+            <if test="activeBegin != null">active_begin,</if>
+            <if test="activeEnd != null">active_end,</if>
+            <if test="lockedAt != null">locked_at,</if>
+            <if test="updatedAt != null">updated_at,</if>
+            <if test="pwdUpdatedAt != null">pwd_updated_at,</if>
+            <if test="loggedAt != null">logged_at,</if>
+            <if test="createAt != null">create_at,</if>
+            <if test="userType != null">user_type,</if>
+            <if test="creatorId != null">creator_id,</if>
+            <if test="creator != null and creator != ''">creator,</if>
+            <if test="organizationId != null and organizationId != ''">organization_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uuid != null and uuid != ''">#{uuid},</if>
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="password != null and password != ''">#{password},</if>
+            <if test="passwords != null and passwords != ''">#{passwords},</if>
+            <if test="dispname != null and dispname != ''">#{dispname},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="im != null and im != ''">#{im},</if>
+            <if test="portrait != null and portrait != ''">#{portrait},</if>
+            <if test="intro != null and intro != ''">#{intro},</if>
+            <if test="organization != null and organization != ''">#{organization},</if>
+            <if test="typ != null">#{typ},</if>
+            <if test="status != null">#{status},</if>
+            <if test="isRoot != null">#{isRoot},</if>
+            <if test="leaderId != null">#{leaderId},</if>
+            <if test="leaderName != null and leaderName != ''">#{leaderName},</if>
+            <if test="loginErrNum != null">#{loginErrNum},</if>
+            <if test="activeBegin != null">#{activeBegin},</if>
+            <if test="activeEnd != null">#{activeEnd},</if>
+            <if test="lockedAt != null">#{lockedAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+            <if test="pwdUpdatedAt != null">#{pwdUpdatedAt},</if>
+            <if test="loggedAt != null">#{loggedAt},</if>
+            <if test="createAt != null">#{createAt},</if>
+            <if test="userType != null">#{userType},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="creator != null and creator != ''">#{creator},</if>
+            <if test="organizationId != null and organizationId != ''">#{organizationId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateUserNosys" parameterType="com.uuc.alarm.domain.UserNosys">
+        update user_nosys
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uuid != null and uuid != ''">uuid = #{uuid},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="passwords != null and passwords != ''">passwords = #{passwords},</if>
+            <if test="dispname != null and dispname != ''">dispname = #{dispname},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="im != null and im != ''">im = #{im},</if>
+            <if test="portrait != null and portrait != ''">portrait = #{portrait},</if>
+            <if test="intro != null and intro != ''">intro = #{intro},</if>
+            <if test="organization != null and organization != ''">organization = #{organization},</if>
+            <if test="typ != null">typ = #{typ},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="isRoot != null">is_root = #{isRoot},</if>
+            <if test="leaderId != null">leader_id = #{leaderId},</if>
+            <if test="leaderName != null and leaderName != ''">leader_name = #{leaderName},</if>
+            <if test="loginErrNum != null">login_err_num = #{loginErrNum},</if>
+            <if test="activeBegin != null">active_begin = #{activeBegin},</if>
+            <if test="activeEnd != null">active_end = #{activeEnd},</if>
+            <if test="lockedAt != null">locked_at = #{lockedAt},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+            <if test="pwdUpdatedAt != null">pwd_updated_at = #{pwdUpdatedAt},</if>
+            <if test="loggedAt != null">logged_at = #{loggedAt},</if>
+            <if test="createAt != null">create_at = #{createAt},</if>
+            <if test="userType != null">user_type = #{userType},</if>
+            <if test="creatorId != null">creator_id = #{creatorId},</if>
+            <if test="creator != null and creator != ''">creator = #{creator},</if>
+            <if test="organizationId != null and organizationId != ''">organization_id = #{organizationId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserNosysById" parameterType="Integer">
+        delete
+        from user_nosys
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteUserNosysByIds" parameterType="String">
+        delete from user_nosys where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectUserNameByIds" resultType="java.util.Map">
+        select id, dispname name from user_nosys
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="selectUserNameListByIds" resultType="java.lang.String">
+        select dispname from user_nosys
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

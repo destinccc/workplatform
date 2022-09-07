@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.uuc.common.redis.configure.RedisConfig,\
+  com.uuc.common.redis.configure.RedisLockUtil,\
+  com.uuc.common.redis.service.RedisService,\
+  com.uuc.common.redis.configure.RedisStreamProperties

@@ -1,0 +1,16 @@
+# Tomcat
+server:
+  port: 8080
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: uuc-gateway
+  profiles:
+    # 环境配置
+    active: @profiles.active@
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+

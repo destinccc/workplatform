@@ -1,0 +1,122 @@
+# spring配置
+spring:
+  redis:
+    host: 10.128.40.206
+    port: 6379
+    password: Q1^dzq5H4H
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+        loginUsername: admin
+        loginPassword: 123456
+    dynamic:
+      druid:
+        initial-size: 5
+        min-idle: 5
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+        filters: stat,slf4j
+        connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+      datasource:
+        # 主库数据源
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://10.128.40.205:3306/monitor_mon?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          username: root
+          password: Public-service#123
+        # 从库数据源
+        slave:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://10.128.40.205:3306/monitor_rdb?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          username: root
+          password: Public-service#123
+      # seata: true    # 开启seata代理，开启后默认每个数据源都代理，如果某个不需要代理可单独关闭
+  rabbitmq:
+    host: 10.128.40.209
+    port: 5672
+    username: admin
+    password: Rabbitmq#123
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 5
+          max-interval: 20000ms
+          initial-interval: 3000ms
+          multiplier: 2
+        default-requeue-rejected: true
+
+# seata配置
+seata:
+  # 默认关闭，如需启用spring.datasource.dynami.seata需要同时开启
+  enabled: false
+  # Seata 应用编号，默认为 ${spring.application.name}
+  application-id: ${spring.application.name}
+  # Seata 事务组编号，用于 TC 集群名
+  tx-service-group: ${spring.application.name}-group
+  # 关闭自动代理
+  enable-auto-data-source-proxy: false
+  # 服务配置项
+  service:
+    # 虚拟组和分组的映射
+    vgroup-mapping:
+      uuc-system-group: default
+  config:
+    type: nacos
+    nacos:
+      serverAddr: 10.128.40.208:8848
+      group: SEATA_GROUP
+      namespace:
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: 10.128.40.208:8848
+      namespace:
+
+# mybatis配置
+mybatis:
+  # 搜索指定包别名
+  typeAliasesPackage: com.uuc.alarm
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath:mapper/**/*.xml
+
+# swagger配置
+swagger:
+  title: 系统模块接口文档
+  basePackage: com.uuc.alarm
+dingtalk:
+  appKey: dingka5voydzynfocyp2
+  appSecret: GL68Fhn70oo2XiVxYO-CWeXH10thpMa9w79cY6kj1BLvvTUZIxZ3iMKywuKD3Z7b
+
+upload:
+  type: base64
+base64:
+  id: 1
+  name: xxx
+redis:
+  stream:
+    enabled: true
+    streamName: test
+    consumerGroup: testGroup
+    consumerName: xjy
+    fieldName: syncBody
+rabbitmq:
+  config:
+    exchangeName: direct_ump_cmdb_sync_exchange
+    routingKey: topic.toCmdb.queue
+    queueName: uucToCmdb.queue
+prometheus:
+  url: http://10.128.120.26:8082/select/0/prometheus

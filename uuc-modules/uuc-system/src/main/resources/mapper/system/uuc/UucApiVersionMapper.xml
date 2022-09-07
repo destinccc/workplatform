@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.mapper.UucApiVersionMapper">
+
+    <resultMap type="com.uuc.system.uuc.domain.UucApiVersion" id="UucApiVersionResult">
+        <result property="id"    column="id"    />
+        <result property="apiVersion"    column="api_version"    />
+        <result property="activate"    column="activate"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="operator"    column="operator"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectUucApiVersionVo">
+        select id, api_version, activate, create_time, update_time, operator, remark from uuc_api_version
+    </sql>
+
+    <select id="selectUucApiVersionList" parameterType="com.uuc.system.uuc.domain.UucApiVersion" resultMap="UucApiVersionResult">
+        <include refid="selectUucApiVersionVo"/>
+        <where>
+            <if test="apiVersion != null  and apiVersion != ''"> and api_version = #{apiVersion}</if>
+            <if test="activate != null  and activate != ''"> and activate = #{activate}</if>
+            <if test="operator != null  and operator != ''"> and operator = #{operator}</if>
+        </where>
+    </select>
+
+    <select id="selectUucApiVersionById"  resultMap="UucApiVersionResult">
+        <include refid="selectUucApiVersionVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertUucApiVersion" parameterType="com.uuc.system.uuc.domain.UucApiVersion">
+        insert into uuc_api_version
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="apiVersion != null and apiVersion != ''">api_version,</if>
+            <if test="activate != null">activate,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="operator != null">operator,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="apiVersion != null and apiVersion != ''">#{apiVersion},</if>
+            <if test="activate != null">#{activate},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="operator != null">#{operator},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucApiVersion" parameterType="com.uuc.system.uuc.domain.UucApiVersion">
+        update uuc_api_version
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="apiVersion != null and apiVersion != ''">api_version = #{apiVersion},</if>
+            <if test="activate != null">activate = #{activate},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="operator != null">operator = #{operator},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucApiVersionById" >
+        delete from uuc_api_version where id = #{id}
+    </delete>
+
+    <delete id="deleteUucApiVersionByIds" >
+        delete from uuc_api_version where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getEffectiveVersion" resultType="java.lang.String">
+        select distinct api_version from uuc_api_version where activate = '1'
+    </select>
+
+    <select id="selectByApiVersion" resultMap="UucApiVersionResult">
+        select  *  from uuc_api_version
+        <where>
+            AND api_version = #{apiVersion}
+            <if test="id != null">
+                AND id != #{id}
+            </if>
+        </where>
+        limit 1
+    </select>
+</mapper>

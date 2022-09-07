@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucUserDeptMapper">
+
+    <resultMap type="UucUserDept" id="UucUserDeptResult">
+        <result property="userCode"    column="user_code"    />
+        <result property="deptCode"    column="dept_code"    />
+        <result property="adminFlag"    column="admin_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectUucUserDeptVo">
+        select ud.user_code, ud.dept_code, ud.admin_flag, ud.create_time, ud.create_by, ud.update_time, ud.update_by, u.user_name as userName
+        from uuc_user_dept ud
+        left join uuc_user_info u on ud.user_code = u.id
+    </sql>
+
+    <select id="selectUucUserDeptList" parameterType="UucUserDept" resultMap="UucUserDeptResult">
+        <include refid="selectUucUserDeptVo"/>
+        <where>
+            <if test="userCode != null  and userCode != ''"> and  ud.user_code = #{userCode}</if>
+            <if test="deptCode != null  and deptCode != ''"> and  ud.dept_code = #{deptCode}</if>
+            <if test="adminFlag != null  and adminFlag != ''"> and  ud.admin_flag = #{adminFlag}</if>
+        </where>
+    </select>
+
+    <select id="selectUucUserDeptByUserCode" parameterType="String" resultMap="UucUserDeptResult">
+        <include refid="selectUucUserDeptVo"/>
+        where  ud.user_code = #{userCode}
+    </select>
+
+    <insert id="insertUucUserDept" parameterType="UucUserDept">
+        insert into uuc_user_dept
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userCode != null and userCode != ''">user_code,</if>
+            <if test="deptCode != null and deptCode != ''">dept_code,</if>
+            <if test="adminFlag != null">admin_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userCode != null and userCode != ''">#{userCode},</if>
+            <if test="deptCode != null and deptCode != ''">#{deptCode},</if>
+            <if test="adminFlag != null">#{adminFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucUserDept" parameterType="UucUserDept">
+        update uuc_user_dept
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptCode != null and deptCode != ''">dept_code = #{deptCode},</if>
+            <if test="adminFlag != null">admin_flag = #{adminFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where user_code = #{userCode}
+    </update>
+
+    <update id="updateUucUserDeptAdminFlag" parameterType="UucUserDept">
+        update uuc_user_dept set admin_flag = #{adminFlag}
+        where user_code = #{userCode} and dept_code = #{deptCode}
+    </update>
+
+    <update id="updateUucUserDeptAdminFlagByDeptCode" parameterType="UucUserDept">
+        update uuc_user_dept set admin_flag = #{adminFlag}
+        where dept_code = #{deptCode}
+    </update>
+
+    <delete id="deleteUucUserDeptByUserCode" parameterType="String">
+        delete from uuc_user_dept where user_code = #{userCode}
+    </delete>
+
+    <delete id="deleteUucUserDeptByDeptCode" parameterType="String">
+        delete from uuc_user_dept where dept_code = #{deptCode}
+    </delete>
+
+    <delete id="deleteUucUserDeptByUserCodes" parameterType="String">
+        delete from uuc_user_dept where user_code in
+        <foreach item="userCode" collection="array" open="(" separator="," close=")">
+            #{userCode}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertUucUserDept">
+        insert into uuc_user_dept (
+            user_code, dept_code, admin_flag, create_time, create_by, update_time, update_by
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.userCode},#{item.deptCode},#{item.adminFlag},
+            #{item.createTime},#{item.createBy}, #{item.updateTime},#{item.updateBy})
+        </foreach>
+    </insert>
+
+    <select id="selectUucUserInDeptCounts" resultType="java.lang.Integer">
+        select count(1) as count from uuc_user_dept
+        where dept_code = #{deptCode}
+        and user_code in
+        <foreach item="userCode" collection="userCodeList" open="(" separator="," close=")">
+            #{userCode}
+        </foreach>
+    </select>
+
+    <select id="checkUserAndDeptRelationsExist" resultType="java.lang.Integer">
+        select count(1) as count from uuc_user_dept
+        where dept_code = #{deptCode}
+    </select>
+</mapper>

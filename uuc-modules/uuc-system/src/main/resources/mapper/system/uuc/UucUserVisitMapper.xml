@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucUserVisitMapper">
+    
+    <resultMap type="UucUserVisit" id="UucUserVisitResult">
+        <result property="id"    column="id"    />
+        <result property="userCode"    column="user_code"    />
+        <result property="userId"    column="user_id"    />
+        <result property="menuId"    column="menu_id"    />
+        <result property="path"    column="path"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+    </resultMap>
+
+    <resultMap type="com.uuc.system.api.model.SysMenu" id="SysMenuResult">
+        <id     property="menuId"         column="menu_id"        />
+        <result property="menuName"       column="menu_name"      />
+        <result property="parentName"     column="parent_name"    />
+        <result property="parentId"       column="parent_id"      />
+        <result property="orderNum"       column="order_num"      />
+        <result property="path"           column="path"           />
+        <result property="component"      column="component"      />
+        <result property="query"          column="query"          />
+        <result property="isFrame"        column="is_frame"       />
+        <result property="isCache"        column="is_cache"       />
+        <result property="menuType"       column="menu_type"      />
+        <result property="visible"        column="visible"        />
+        <result property="status"         column="status"         />
+        <result property="perms"          column="perms"          />
+        <result property="icon"           column="icon"           />
+        <result property="createBy"       column="create_by"      />
+        <result property="createTime"     column="create_time"    />
+        <result property="updateTime"     column="update_time"    />
+        <result property="updateBy"       column="update_by"      />
+        <result property="remark"         column="remark"         />
+        <result property="clientId"       column="client_id"      />
+        <result property="attribution"    column="attribution"    />
+        <!--		<result property="innerIdentifier"         column="inner_identifier"         />-->
+    </resultMap>
+    <sql id="selectUucUserVisitVo">
+        select id, user_code, user_id, menu_id, create_time, create_by from uuc_user_visit
+    </sql>
+
+    <select id="selectUucUserVisitList" parameterType="UucUserVisit" resultMap="UucUserVisitResult">
+        <include refid="selectUucUserVisitVo"/>
+        <where>  
+            <if test="userCode != null  and userCode != ''"> and user_code = #{userCode}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="menuId != null "> and menu_id = #{menuId}</if>
+        </where>
+    </select>
+    
+    <select id="selectUucUserVisitById" parameterType="Long" resultMap="UucUserVisitResult">
+        <include refid="selectUucUserVisitVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertUucUserVisit" parameterType="UucUserVisit" useGeneratedKeys="true" keyProperty="id">
+        insert into uuc_user_visit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userCode != null">user_code,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="menuId != null">menu_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="path != null">path,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userCode != null">#{userCode},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="menuId != null">#{menuId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="path != null">#{path},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucUserVisit" parameterType="UucUserVisit">
+        update uuc_user_visit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userCode != null">user_code = #{userCode},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="menuId != null">menu_id = #{menuId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucUserVisitById" parameterType="Long">
+        delete from uuc_user_visit where id = #{id}
+    </delete>
+
+    <delete id="deleteUucUserVisitByIds" parameterType="String">
+        delete from uuc_user_visit where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectUucUserRecentVisit" parameterType="Long" resultMap="SysMenuResult">
+        select s.menu_name,s.parent_id,s.visible,s.status,s.icon,s.remark,s.perms,s.client_id,order_num,s.is_frame,a.path,a.maxCreate from
+        (select * from uuc_user_visit u RIGHT JOIN (select max(id) as mid,max(create_time) as maxCreate from uuc_user_visit where user_id=#{userId} and DATE_SUB(curdate(),INTERVAL 7 Day) &lt;= date(create_time) group by menu_id order by maxCreate desc limit 8) m on u.id=m.mid) a
+        left join sys_menu s on a.menu_id=s.menu_id order by a.maxCreate desc
+    </select>
+</mapper>

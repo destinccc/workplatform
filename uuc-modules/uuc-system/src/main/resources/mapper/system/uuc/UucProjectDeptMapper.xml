@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucProjectDeptMapper">
+
+    <resultMap type="UucProjectDept" id="UucProjectDeptResult">
+        <result property="deptCode"    column="dept_code"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectUucProjectDeptVo">
+        select dept_code, project_code, create_by, create_time, update_time, update_by from uuc_project_dept
+    </sql>
+
+    <select id="selectUucProjectDeptList" parameterType="UucProjectDept" resultMap="UucProjectDeptResult">
+        <include refid="selectUucProjectDeptVo"/>
+        <where>
+            <if test="deptCode != null  and deptCode != ''"> and dept_code = #{deptCode}</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+        </where>
+    </select>
+
+    <select id="selectUucProjectDeptByDeptCode" parameterType="String" resultMap="UucProjectDeptResult">
+        <include refid="selectUucProjectDeptVo"/>
+        where dept_code = #{deptCode}
+    </select>
+
+    <insert id="insertUucProjectDept" parameterType="UucProjectDept">
+        insert into uuc_project_dept
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptCode != null and deptCode != ''">dept_code,</if>
+            <if test="projectCode != null and projectCode != ''">project_code,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptCode != null and deptCode != ''">#{deptCode},</if>
+            <if test="projectCode != null and projectCode != ''">#{projectCode},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucProjectDept" parameterType="UucProjectDept">
+        update uuc_project_dept
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectCode != null and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where dept_code = #{deptCode}
+    </update>
+
+    <delete id="deleteUucProjectDeptByDeptCode" parameterType="String">
+        delete from uuc_project_dept where dept_code = #{deptCode}
+    </delete>
+
+    <delete id="deleteUucProjectDeptByProjectCode" parameterType="String">
+        delete from uuc_project_dept where project_code = #{projectCode}
+    </delete>
+
+    <delete id="deleteUucProjectDeptByDeptCodes" parameterType="String">
+        delete from uuc_project_dept where dept_code in
+        <foreach item="deptCode" collection="array" open="(" separator="," close=")">
+            #{deptCode}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertUucProjectDept">
+        insert into uuc_project_dept (
+            project_code, dept_code, create_time, create_by, update_time, update_by
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.projectCode},#{item.deptCode},
+            #{item.createTime},#{item.createBy}, #{item.updateTime},#{item.updateBy})
+        </foreach>
+    </insert>
+
+    <select id="checkProjectAndDeptRelationsExist" resultType="java.lang.Integer">
+        select count(1) as count from uuc_project_dept
+        where dept_code = #{deptCode}
+    </select>
+
+    <select id="selectProjectUsedDepts" resultType="java.lang.String">
+        select distinct dept_code from uuc_project_dept where project_code = #{deptCode}
+    </select>
+</mapper>

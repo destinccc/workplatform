@@ -1,0 +1,9 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.uuc.system.api.factory.RemoteUaaFallbackFactory,\
+  com.uuc.system.api.factory.RemoteUserFallbackFactory,\
+  com.uuc.system.api.factory.RemoteLogFallbackFactory, \
+  com.uuc.system.api.factory.RemoteFileFallbackFactory, \
+  com.uuc.system.api.factory.RemoteSystemFallbackFactory, \
+  com.uuc.system.api.factory.RemoteCmdbFallbackFactory, \
+  com.uuc.system.api.factory.RemoteResourceFallbackFactory, \
+  com.uuc.system.api.factory.RemoteClientFallbackFactory

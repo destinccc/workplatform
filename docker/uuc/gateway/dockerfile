@@ -1,0 +1,17 @@
+# 基础镜像
+FROM  openjdk:8-jre
+# author
+MAINTAINER uuc
+
+# 挂载目录
+VOLUME /home/uuc
+# 创建目录
+RUN mkdir -p /home/uuc
+# 指定路径
+WORKDIR /home/uuc
+# 复制jar文件到路径
+COPY uuc-gateway/target/uuc-gateway.jar /home/uuc/uuc-gateway.jar
+EXPOSE 8080
+
+# 启动网关服务
+ENTRYPOINT [ "sh", "-c", "exec java ${JAVA_OPTS} -jar uuc-gateway.jar"]

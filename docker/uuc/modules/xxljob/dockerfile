@@ -1,0 +1,18 @@
+# 基础镜像
+FROM  openjdk:8-jre
+# author
+MAINTAINER uuc
+
+# 挂载目录
+VOLUME /home/uuc
+# 创建目录
+RUN mkdir -p /home/uuc
+# 指定路径
+WORKDIR /home/uuc
+# 复制jar文件到路径
+COPY uuc-modules/uuc-xxljob/target/uuc-modules-xxljob.jar /home/uuc/uuc-modules-xxljob.jar
+EXPOSE 9511
+
+
+# 启动系统服务
+ENTRYPOINT [ "sh", "-c", "exec java ${JAVA_OPTS} -jar uuc-modules-xxljob.jar"]

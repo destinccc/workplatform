@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucUserInfoMapper">
+
+    <resultMap type="com.uuc.system.api.model.UucUserInfo" id="UucUserInfoResult">
+        <result property="id"    column="id"    />
+        <result property="userCode"    column="user_code"    />
+        <result property="userName"    column="user_name"    />
+        <result property="userType"    column="user_type"    />
+        <result property="email"    column="email"    />
+        <result property="phone"    column="phone"    />
+        <result property="extendId"    column="extend_id"    />
+        <result property="sex"    column="sex"    />
+        <result property="userJobNumber"    column="user_job_number"    />
+        <result property="workLocation"    column="work_location"    />
+        <result property="entryTime"    column="entry_time"    />
+<!--        <result property="userStatus"    column="user_status"    />-->
+        <result property="leaderCode"    column="leader_code"    />
+        <result property="leaderName"    column="leader_name"    />
+<!--        <result property="probationEndTime"    column="probation_end_time"    />-->
+<!--        <result property="dimissionTime"    column="dimission_time"    />-->
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="postName"    column="post_name"    />
+
+        <result property="authorizeType"    column="authorize_type"    />
+        <result property="hiredTime"    column="hired_time"    />
+        <result property="liveSpace"    column="live_space"    />
+        <result property="remark"    column="remark"    />
+        <result property="identityCard"    column="identity_card"    />
+        <result property="centerUid"    column="extend_id"    />
+    </resultMap>
+
+    <select id="listAllUser" resultType="com.uuc.system.uuc.domain.SignatureUserVo">
+        select u.id as userCode, GROUP_CONCAT( distinct a.login_acct) as username, GROUP_CONCAT(r.dept_code) as deptCode, GROUP_CONCAT(d.dept_name) as deptName, u.user_name as nickname, u.phone, u.user_type as source,u.extend_id as extendId, u.email, u.identity_card as idcard, u.sex, u.user_job_number as jobNumber, u.work_location as workLocation,u.leader_code as leaderCode, u.post_name as postName, u.live_space as liveSpace, '1' as active, '0' as lockFlag, u.create_time as createTime, u.create_by as createBy, u.update_time as updateTime, u.update_by as updateBy,u.remark
+        from uuc_user_info u
+        left join uuc_user_dept r on r.user_code = u.id
+        left join uuc_dept_info d on d.id = r.dept_code
+        left join uuc_login_account a on u.id = a.user_code
+        group by u.id
+    </select>
+
+    <sql id="selectUucUserInfoVo">
+        select u.id, u.user_code, u.user_name, u.user_type, u.email, u.phone, u.sex, u.user_job_number, u.work_location, u.entry_time,
+<!--        u.user_status, u.probation_end_time, u.dimission_time,-->
+        u.leader_code, u.leader_name,  u.status, u.create_time, u.create_by, u.update_time, u.update_by, u.del_flag,
+        GROUP_CONCAT(d.dept_name) as deptName, u.post_name, u.authorize_type, u.hired_time, u.live_space, u.remark, u.identity_card,u.extend_id
+        from uuc_user_info u
+        left join uuc_user_dept r on r.user_code = u.id
+        left join uuc_dept_info d on d.id = r.dept_code
+    </sql>
+
+    <select id="selectUucUserInfoList" parameterType="UucUserInfo" resultMap="UucUserInfoResult">
+        <include refid="selectUucUserInfoVo"/>
+        <where>
+            <if test="userCode != null  and userCode != ''"> and u.user_code = #{userCode}</if>
+            <if test="userName != null  and userName != ''"> and u.user_name like concat('%', #{userName}, '%')</if>
+            <if test="userType != null  and userType != ''"> and u.user_type = #{userType}</if>
+            <if test="email != null  and email != ''"> and u.email = #{email}</if>
+            <if test="phone != null  and phone != ''"> and u.phone = #{phone}</if>
+            <if test="sex != null  and sex != ''"> and u.sex = #{sex}</if>
+            <if test="userJobNumber != null  and userJobNumber != ''"> and u.user_job_number = #{userJobNumber}</if>
+            <if test="workLocation != null  and workLocation != ''"> and u.work_location = #{workLocation}</if>
+            <if test="entryTime != null "> and u.entry_time = #{entryTime}</if>
+<!--            <if test="userStatus != null  and userStatus != ''"> and u.user_status = #{userStatus}</if>-->
+            <if test="leaderCode != null  and leaderCode != ''"> and u.leader_code = #{leaderCode}</if>
+            <if test="leaderName != null  and leaderName != ''"> and u.leader_name like concat('%', #{leaderName}, '%')</if>
+<!--            <if test="probationEndTime != null "> and u.probation_end_time = #{probationEndTime}</if>-->
+<!--            <if test="dimissionTime != null "> and u.dimission_time = #{dimissionTime}</if>-->
+            <if test="status != null  and status != ''"> and u.status = #{status}</if>
+            <if test="deptCode != null  and deptCode != ''">
+                AND (d.id = #{deptCode} OR d.id IN ( SELECT t.id FROM uuc_dept_info t WHERE find_in_set(#{deptCode}, ancestors) ))
+            </if>
+            and u.del_flag = '0'
+        </where>
+            group by u.id
+            order by create_time desc
+    </select>
+
+    <select id="selectUucUserInfoById" parameterType="Long" resultMap="UucUserInfoResult">
+        select a.*, us.user_name as leaderName from (
+            <include refid="selectUucUserInfoVo"/>
+            where u.id = #{id}
+        ) a
+        left join uuc_user_info us on a.leader_code = us.id
+    </select>
+    <select id="selectUucUserInfoByUid" parameterType="String" resultMap="UucUserInfoResult">
+        select a.*, us.user_name as leaderName from (
+            <include refid="selectUucUserInfoVo"/>
+            where u.extend_id = #{uid}
+            group by u.id
+        ) a
+        left join uuc_user_info us on a.leader_code = us.id
+    </select>
+
+    <insert id="insertUucUserInfo" parameterType="UucUserInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into uuc_user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">id,</if>
+            <if test="userCode != null and userCode != ''">user_code,</if>
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="userType != null and userType != ''">user_type,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="extendId != null and extendId != ''">extend_id,</if>
+            <if test="sex != null and sex != ''">sex,</if>
+            <if test="userJobNumber != null">user_job_number,</if>
+            <if test="workLocation != null">work_location,</if>
+            <if test="entryTime != null">entry_time,</if>
+<!--            <if test="userStatus != null">user_status,</if>-->
+            <if test="leaderCode != null">leader_code,</if>
+            <if test="leaderName != null">leader_name,</if>
+<!--            <if test="probationEndTime != null">probation_end_time,</if>-->
+<!--            <if test="dimissionTime != null">dimission_time,</if>-->
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="postName != null">post_name,</if>
+
+            <if test="authorizeType != null">authorize_type,</if>
+            <if test="hiredTime != null">hired_time,</if>
+            <if test="liveSpace != null">live_space,</if>
+            <if test="remark != null">remark,</if>
+            <if test="identityCard != null">identity_card,</if>
+            <if test="centerUid != null">extend_id,</if>
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">#{id},</if>
+            <if test="userCode != null and userCode != ''">#{userCode},</if>
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="userType != null and userType != ''">#{userType},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="extendId != null and extendId != ''">#{extendId},</if>
+            <if test="sex != null and sex != ''">#{sex},</if>
+            <if test="userJobNumber != null">#{userJobNumber},</if>
+            <if test="workLocation != null">#{workLocation},</if>
+            <if test="entryTime != null">#{entryTime},</if>
+<!--            <if test="userStatus != null">#{userStatus},</if>-->
+            <if test="leaderCode != null">#{leaderCode},</if>
+            <if test="leaderName != null">#{leaderName},</if>
+<!--            <if test="probationEndTime != null">#{probationEndTime},</if>-->
+<!--            <if test="dimissionTime != null">#{dimissionTime},</if>-->
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="postName != null">#{postName},</if>
+
+            <if test="authorizeType != null">#{authorizeType},</if>
+            <if test="hiredTime != null">#{hiredTime},</if>
+            <if test="liveSpace != null">#{liveSpace},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="identityCard != null">#{identityCard},</if>
+            <if test="centerUid != null">#{centerUid},</if>
+
+         </trim>
+    </insert>
+
+    <update id="updateUucUserInfo" parameterType="UucUserInfo">
+        update uuc_user_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userCode != null and userCode != ''">user_code = #{userCode},</if>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="userType != null and userType != ''">user_type = #{userType},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="extendId != null and extendId != ''">extend_id = #{extendId},</if>
+            <if test="sex != null and sex != ''">sex = #{sex},</if>
+            <if test="userJobNumber != null">user_job_number = #{userJobNumber},</if>
+            <if test="workLocation != null">work_location = #{workLocation},</if>
+            <if test="entryTime != null">entry_time = #{entryTime},</if>
+<!--            <if test="userStatus != null">user_status = #{userStatus},</if>-->
+                                                            leader_code = #{leaderCode},
+            <if test="leaderName != null">leader_name = #{leaderName},</if>
+<!--            <if test="probationEndTime != null">probation_end_time = #{probationEndTime},</if>-->
+<!--            <if test="dimissionTime != null">dimission_time = #{dimissionTime},</if>-->
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="postName != null">post_name = #{postName},</if>
+
+            <if test="authorizeType != null">authorize_type = #{authorizeType},</if>
+            <if test="hiredTime != null">hired_time = #{hiredTime},</if>
+            <if test="liveSpace != null">live_space = #{liveSpace},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="identityCard != null">identity_card = #{identityCard},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucUserInfoById" parameterType="Long">
+        update uuc_user_info set del_flag = '1' where id = #{id}
+    </delete>
+
+    <delete id="deleteUucUserInfoByIds" parameterType="String">
+        update uuc_user_info set del_flag = '1' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectUucUserInfoByDingUid" resultMap="UucUserInfoResult">
+        select *  from uuc_user_info where extend_id = #{extendId} limit 1
+    </select>
+
+    <select id="selectDingUser" resultType="java.lang.String">
+        select distinct extend_id from uuc_user_info where extend_id is not null
+    </select>
+
+    <select id="getUserByUserType" resultType="java.lang.String">
+        select distinct extend_id from uuc_user_info where extend_id is not null and user_type = #{userType}
+    </select>
+
+    <delete id="deleteDingUserByCode">
+        delete from uuc_user_info where  extend_id =#{userCode}
+    </delete>
+
+    <select id="checkPhoneUnique" parameterType="String" resultType="int">
+        select count(1) from uuc_user_info where del_flag = '0' and phone = #{phone}
+    </select>
+
+    <select id="selectAllUser" resultMap="UucUserInfoResult">
+        select *  from uuc_user_info where del_flag = '0'
+    </select>
+
+    <select id="selectDingUserList" resultMap="UucUserInfoResult">
+        SELECT
+                *
+        FROM
+                uuc_user_info
+        WHERE
+            extend_id IS NOT NULL
+          AND user_type = '01'
+    </select>
+
+    <delete id="deleteDingUucUserInfoByIds">
+        DELETE FROM
+        uuc_user_info
+        WHERE
+        extend_id IS NOT NULL
+        AND id IN
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <resultMap id="userIdList" type="java.lang.String" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="getAdminUserList" resultMap="userIdList">
+        select u.id from uuc_user_info u
+        join sys_user_role sur on sur.user_id = u.id
+        join sys_role sr on sr.role_id = sur.role_id
+        where sr.role_key = 'cmadmin' or sr.role_key = 'opeadmin'
+    </select>
+    <update id="syncUserByPhone" parameterType="UucUserInfo">
+        update uuc_user_info set extend_id=#{centerUid}
+        where phone = #{phone}
+    </update>
+
+    <select id="selectUucNotHasRoleUser" resultType="java.lang.Long">
+        SELECT
+                DISTINCT u.id
+        FROM
+            (SELECT
+                    ucc.id,
+                    role.role_id
+             FROM uuc_user_info ucc LEFT JOIN sys_user_role role ON ucc.id = role.user_id) u
+        WHERE
+                u.role_id IS NULL
+    </select>
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucApplicationMapper">
+    
+    <resultMap type="UucApplication" id="UucApplicationResult">
+        <result property="id"    column="id"    />
+        <result property="applicationCode"    column="application_code"    />
+        <result property="applicationName"    column="application_name"    />
+        <result property="applicationType"    column="application_type"    />
+        <result property="applicationSecret"    column="application_secret"    />
+        <result property="applicationDesc"    column="application_desc"    />
+        <result property="applicationLogo"    column="application_logo"    />
+        <result property="applicationLabel"    column="application_label"    />
+        <result property="applicationOrderNum"    column="application_order_num"    />
+        <result property="parentApplicationCode"    column="parent_application_code"    />
+        <result property="level"    column="level"    />
+        <result property="applicationUrl"    column="application_url"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectUucApplicationVo">
+        select id, application_code, application_name, application_type, application_secret, application_desc, application_logo, application_label, application_order_num, parent_application_code, level, application_url, create_by, create_time, update_by, update_time, del_flag from uuc_application
+    </sql>
+
+    <select id="selectUucApplicationList" parameterType="UucApplication" resultMap="UucApplicationResult">
+        <include refid="selectUucApplicationVo"/>
+        <where>  
+            <if test="applicationCode != null  and applicationCode != ''"> and application_code = #{applicationCode}</if>
+            <if test="applicationName != null  and applicationName != ''"> and application_name like concat('%', #{applicationName}, '%')</if>
+            <if test="applicationType != null  and applicationType != ''"> and application_type = #{applicationType}</if>
+            <if test="applicationSecret != null  and applicationSecret != ''"> and application_secret = #{applicationSecret}</if>
+            <if test="applicationDesc != null  and applicationDesc != ''"> and application_desc = #{applicationDesc}</if>
+            <if test="applicationLogo != null  and applicationLogo != ''"> and application_logo = #{applicationLogo}</if>
+            <if test="applicationLabel != null  and applicationLabel != ''"> and application_label = #{applicationLabel}</if>
+            <if test="applicationOrderNum != null "> and application_order_num = #{applicationOrderNum}</if>
+            <if test="parentApplicationCode != null  and parentApplicationCode != ''"> and parent_application_code = #{parentApplicationCode}</if>
+            <if test="level != null "> and level = #{level}</if>
+            <if test="applicationUrl != null  and applicationUrl != ''"> and application_url = #{applicationUrl}</if>
+        </where>
+    </select>
+    
+    <select id="selectUucApplicationById" parameterType="Long" resultMap="UucApplicationResult">
+        <include refid="selectUucApplicationVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertUucApplication" parameterType="UucApplication">
+        insert into uuc_application
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="applicationCode != null and applicationCode != ''">application_code,</if>
+            <if test="applicationName != null and applicationName != ''">application_name,</if>
+            <if test="applicationType != null">application_type,</if>
+            <if test="applicationSecret != null">application_secret,</if>
+            <if test="applicationDesc != null">application_desc,</if>
+            <if test="applicationLogo != null">application_logo,</if>
+            <if test="applicationLabel != null">application_label,</if>
+            <if test="applicationOrderNum != null">application_order_num,</if>
+            <if test="parentApplicationCode != null">parent_application_code,</if>
+            <if test="level != null">level,</if>
+            <if test="applicationUrl != null">application_url,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="applicationCode != null and applicationCode != ''">#{applicationCode},</if>
+            <if test="applicationName != null and applicationName != ''">#{applicationName},</if>
+            <if test="applicationType != null">#{applicationType},</if>
+            <if test="applicationSecret != null">#{applicationSecret},</if>
+            <if test="applicationDesc != null">#{applicationDesc},</if>
+            <if test="applicationLogo != null">#{applicationLogo},</if>
+            <if test="applicationLabel != null">#{applicationLabel},</if>
+            <if test="applicationOrderNum != null">#{applicationOrderNum},</if>
+            <if test="parentApplicationCode != null">#{parentApplicationCode},</if>
+            <if test="level != null">#{level},</if>
+            <if test="applicationUrl != null">#{applicationUrl},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucApplication" parameterType="UucApplication">
+        update uuc_application
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applicationCode != null and applicationCode != ''">application_code = #{applicationCode},</if>
+            <if test="applicationName != null and applicationName != ''">application_name = #{applicationName},</if>
+            <if test="applicationType != null">application_type = #{applicationType},</if>
+            <if test="applicationSecret != null">application_secret = #{applicationSecret},</if>
+            <if test="applicationDesc != null">application_desc = #{applicationDesc},</if>
+            <if test="applicationLogo != null">application_logo = #{applicationLogo},</if>
+            <if test="applicationLabel != null">application_label = #{applicationLabel},</if>
+            <if test="applicationOrderNum != null">application_order_num = #{applicationOrderNum},</if>
+            <if test="parentApplicationCode != null">parent_application_code = #{parentApplicationCode},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="applicationUrl != null">application_url = #{applicationUrl},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUucApplicationById" parameterType="Long">
+        delete from uuc_application where id = #{id}
+    </delete>
+
+    <delete id="deleteUucApplicationByIds" parameterType="String">
+        delete from uuc_application where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

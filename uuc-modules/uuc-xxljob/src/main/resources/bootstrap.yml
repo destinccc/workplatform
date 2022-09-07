@@ -1,0 +1,23 @@
+server.port: 9511
+spring.application.name: uuc-xxljob
+spring.profiles.active: @profiles.active@
+
+xxl.job.enabled: true
+# 服务注册地址配置在nacos
+xxl.job.admin-addresses: ${xxljob.adminaddresses}
+xxl.job.access-token:
+xxl.job.executor.appname: ${xxljob.executorappname}
+xxl.job.executor.port: ${xxljob.executorport}
+xxl.job.executor.address:
+xxl.job.executor.ip:
+xxl.job.executor.logpath: /tmp/logs/xxljob/${spring.application.name}/xxl-job
+xxl.job.executor.logretentiondays: 30
+
+# Swagger配置
+knife4j.enable: true
+knife4j.production: true
+# 默认设置false不开放文档, 设置为true鉴权后开放
+knife4j.basic.enable: false
+knife4j.basic.username: admin
+knife4j.basic.password: admin123
+

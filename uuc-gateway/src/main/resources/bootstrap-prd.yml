@@ -1,0 +1,42 @@
+# Spring
+spring:
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr: ${NACOS_ADDR:10.128.40.208:8848}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:Nacos#123}
+        namespace: ${NACOS_NAMESPACE:prd}
+      config:
+        # 配置中心地址
+        server-addr: ${NACOS_ADDR:10.128.40.208:8848}
+        # 配置文件格式
+        file-extension: yml
+        # 命名空间
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:Nacos#123}
+        namespace: ${NACOS_NAMESPACE:prd}
+        # 配置组
+        group: UNIFIED_MANAGEMENT
+        # 共享配置
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+    sentinel:
+      # 取消控制台懒加载
+      eager: true
+      transport:
+        # 控制台地址
+        dashboard: 127.0.0.1:8718
+      # nacos配置持久化
+      datasource:
+        ds1:
+          nacos:
+            server-addr: ${NACOS_ADDR:10.128.40.208:8848}
+            username: ${NACOS_USERNAME:nacos}
+            password: ${NACOS_PASSWORD:Nacos#123}
+            namespace: ${NACOS_NAMESPACE:uuc}
+            dataId: sentinel-uuc-gateway
+            groupId: UNIFIED_MANAGEMENT
+            data-type: json
+            rule-type: flow

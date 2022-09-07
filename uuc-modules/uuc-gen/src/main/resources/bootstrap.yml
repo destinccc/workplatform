@@ -1,0 +1,15 @@
+server.port: 9302
+spring.application.name: uuc-gen
+spring.profiles.active: dev
+
+
+spring.cloud.nacos.server-addr: 10.128.40.208:8848
+spring.cloud.nacos.discovery.username: nacos
+spring.cloud.nacos.discovery.password: Nacos#123
+spring.cloud.nacos.discovery.namespace: qin
+spring.cloud.nacos.config.namespace: qin
+spring.cloud.nacos.config.file-extension: yml
+spring.cloud.nacos.config.group: DEFAULT_GROUP
+spring.cloud.nacos.config.shared-configs[0]: application-dev.${spring.cloud.nacos.config.file-extension}
+spring.cloud.nacos.config.extension-configs[0].data-id: ${spring.application.name}-dev.${spring.cloud.nacos.config.file-extension}
+spring.cloud.nacos.config.extension-configs[0].refresh: true

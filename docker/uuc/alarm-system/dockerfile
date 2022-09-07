@@ -1,0 +1,14 @@
+# 基础镜像
+FROM  openjdk:8-jre
+# author
+LABEL MAINTAINER=gitlab.galaksiodatanubo.work/cmp/uuc/uuc-services-backend
+
+WORKDIR /app
+# 挂载目录
+VOLUME /app
+# 暴露端口
+EXPOSE 9515
+# 复制jar文件到路径
+COPY uuc-modules/alarm-system/target/alarm-system.jar app.jar
+# 启动认证服务
+ENTRYPOINT [ "sh", "-c", "exec java ${JAVA_OPTS} -jar app.jar"]

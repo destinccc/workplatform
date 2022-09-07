@@ -1,0 +1,15 @@
+# spring配置
+spring:
+  redis:
+    host: 10.128.40.206
+    port: 6379
+    password: Q1^dzq5H4H
+resource:
+  dept:
+    #卫健委多云接口客户端对应的客户端id
+    wClientId: wjw
+  consul:
+    #卫健委多云监控接口对接consul的连接地址
+    url: 10.228.82.154:8081
+    #consul上注册的服务名
+    serviceName: vm_instances

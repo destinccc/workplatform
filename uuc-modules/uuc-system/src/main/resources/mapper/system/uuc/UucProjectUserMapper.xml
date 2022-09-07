@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uuc.system.uuc.mapper.UucProjectUserMapper">
+
+    <resultMap type="com.uuc.system.api.model.UucProjectUser" id="UucProjectUserResult">
+        <result property="userCode"    column="user_code"    />
+        <result property="projectCode"    column="project_code"    />
+        <result property="adminFlag"    column="admin_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="maintenerFlag"    column="maintener_flag"    />
+        <result property="phone"    column="phone"    />
+    </resultMap>
+
+    <sql id="selectUucProjectUserVo">
+        select user_code, project_code, admin_flag, maintener_flag, create_time, create_by, update_time, update_by from uuc_project_user
+    </sql>
+
+    <select id="selectUucProjectUserList" parameterType="UucProjectUser" resultMap="UucProjectUserResult">
+        <include refid="selectUucProjectUserVo"/>
+        <where>
+            <if test="userCode != null  and userCode != ''"> and user_code = #{userCode}</if>
+            <if test="projectCode != null  and projectCode != ''"> and project_code = #{projectCode}</if>
+            <if test="adminFlag != null  and adminFlag != ''"> and admin_flag = #{adminFlag}</if>
+        </where>
+    </select>
+
+    <select id="selectUucProjectUserByUserCode" parameterType="String" resultMap="UucProjectUserResult">
+        <include refid="selectUucProjectUserVo"/>
+        where user_code = #{userCode}
+    </select>
+
+    <insert id="insertUucProjectUser" parameterType="UucProjectUser">
+        insert into uuc_project_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userCode != null and userCode != ''">user_code,</if>
+            <if test="projectCode != null and projectCode != ''">project_code,</if>
+            <if test="adminFlag != null and adminFlag != ''">admin_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="maintenerFlag != null and maintenerFlag != ''">maintener_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userCode != null and userCode != ''">#{userCode},</if>
+            <if test="projectCode != null and projectCode != ''">#{projectCode},</if>
+            <if test="adminFlag != null and adminFlag != ''">#{adminFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="maintenerFlag != null and maintenerFlag != ''">#{maintenerFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUucProjectUser" parameterType="UucProjectUser">
+        update uuc_project_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectCode != null and projectCode != ''">project_code = #{projectCode},</if>
+            <if test="adminFlag != null and adminFlag != ''">admin_flag = #{adminFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="maintenerFlag != null">maintener_flag = #{maintenerFlag},</if>
+        </trim>
+        where user_code = #{userCode}
+    </update>
+
+    <delete id="deleteUucProjectUserByUserCode" parameterType="String">
+        delete from uuc_project_user where user_code = #{userCode}
+    </delete>
+
+    <delete id="deleteUucProjectUserByProjectCode" parameterType="String">
+        delete from uuc_project_user where project_code = #{projectCode}
+    </delete>
+
+    <delete id="deleteUucProjectUserByUserCodes" parameterType="String">
+        delete from uuc_project_user where user_code in
+        <foreach item="userCode" collection="array" open="(" separator="," close=")">
+            #{userCode}
+        </foreach>
+    </delete>
+
+    <delete id="deleteUucProjectUserByProjectCodes" parameterType="Long">
+        delete from uuc_project_user where project_code in
+        <foreach item="projectCode" collection="array" open="(" separator="," close=")">
+            #{projectCode}
+        </foreach>
+    </delete>
+
+    <select id="selectUucProjectUserByProjectCode"  resultMap="UucProjectUserResult">
+        select * from uuc_project_user where project_code = #{projectCode} order by admin_flag desc,maintener_flag desc,create_time desc
+    </select>
+    <select id="selectUucProjectUserByCond" parameterType="UucProjectUser" resultMap="UucProjectUserResult">
+        select p.*,u.phone as phone from uuc_project_user p left join uuc_user_info u on p.user_code=u.id where 1=1
+            <if test="userName != null  and userName != ''"> and u.user_name like concat('%', #{userName}, '%')</if>
+            <if test="phone != null  and phone != ''"> and u.phone like concat('%', #{phone}, '%')</if>
+        and p.project_code = #{projectCode} order by p.admin_flag desc,p.maintener_flag desc,p.create_time desc
+    </select>
+
+    <insert id="batchInsertUucProjectUser">
+        insert into uuc_project_user (
+            user_code, project_code, admin_flag, maintener_flag, create_time, create_by, update_time, update_by
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.userCode},#{item.projectCode},#{item.adminFlag},#{item.maintenerFlag},
+            #{item.createTime},#{item.createBy}, #{item.updateTime},#{item.updateBy})
+        </foreach>
+    </insert>
+
+</mapper>

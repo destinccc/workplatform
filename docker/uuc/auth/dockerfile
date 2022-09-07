@@ -1,0 +1,16 @@
+# 基础镜像
+FROM  openjdk:8-jre
+# author
+MAINTAINER uuc
+
+# 挂载目录
+VOLUME /home/uuc
+# 创建目录
+RUN mkdir -p /home/uuc
+# 指定路径
+WORKDIR /home/uuc
+# 复制jar文件到路径
+COPY uuc-auth/target/uuc-auth.jar /home/uuc/uuc-auth.jar
+EXPOSE 9200
+# 启动认证服务
+ENTRYPOINT [ "sh", "-c", "exec java ${JAVA_OPTS} -jar uuc-auth.jar"]
